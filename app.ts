@@ -4,7 +4,7 @@ import config from "config";
 import dbConnection from "./utils/dbConnection";
 import logger from "./logger";
 
-const PORT: string = config.get("PORT");
+const PORT = config.get<number>("PORT");
 
 const app = express();
 app.use(express.json());

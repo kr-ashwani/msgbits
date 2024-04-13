@@ -9,7 +9,8 @@
     "outDir": "build",
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": true
+    "noImplicitAny": true,
+    "noEmitOnError": true
   },
   "lib": ["es2015"]
 }
