@@ -1,3 +1,5 @@
+import mailService from "../../service/MailService";
+import { MailParams } from "../../utilityClasses/mail/Mail";
 import { MailQueueName } from "../queues/MailQueue";
 import BaseWorker from "./BaseWorker";
 import type { Job } from "bullmq";
@@ -8,7 +10,7 @@ class MailWorker<DataType, ResultType> extends BaseWorker<DataType, ResultType> 
   }
 
   protected async workerCallback(job: Job<DataType, ResultType, string>): Promise<ResultType> {
-    // console.log(job);
+    mailService.sendMail(job.data as MailParams);
     return job.returnvalue;
   }
 }

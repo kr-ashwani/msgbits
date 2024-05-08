@@ -2,6 +2,7 @@ import config from "config";
 import mongoose from "mongoose";
 import logger from "../logger";
 import handleError from "../errorhandler/ErrorHandler";
+import { errToBaseError } from "../errors/BaseError";
 
 const MONGODB_URI = config.get<string>("MONGODB_URI");
 
@@ -13,6 +14,6 @@ export default async function dbConnection() {
     await mongoose.connect(MONGODB_URI);
     logger.info(`connected to mongodb`);
   } catch (err: unknown) {
-    if (err instanceof Error) handleError(err);
+    if (err instanceof Error) handleError(errToBaseError(err, false));
   }
 }

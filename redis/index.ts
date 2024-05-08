@@ -3,16 +3,22 @@ import MailQueue from "./queues/MailQueue";
 import MailWorker from "./workers/MailWorker";
 import Mail from "../utilityClasses/mail/Mail";
 
+/**
+ * Centralised class for initializing all queue and Worker
+ */
 class RedisPubSub {
   private static redispubsub: RedisPubSub;
 
   // Mail Queue and Worker
   mailQueue: Queue<Mail, Mail>;
+  errMailQueue: Queue<Mail, Mail>;
   private mailWorker: Worker<Mail, Mail>;
 
   private constructor() {
     //Initialize Mail Queue and Worker
-    this.mailQueue = new MailQueue<Mail, Mail>().getQueue();
+    let queue = new MailQueue<Mail, Mail>();
+    this.mailQueue = queue.getQueue();
+    this.errMailQueue = queue.getErrorQueue();
     this.mailWorker = new MailWorker<Mail, Mail>().getWorker();
   }
 

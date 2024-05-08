@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import DbCollectionMissingError from "../errors/parameterMissingError/DbCollectionMissingError";
 import LogSchema, { LogSchemaType } from "../model/Log";
 import handleError from "../errorhandler/ErrorHandler";
+import { errToBaseError } from "../errors/BaseError";
 interface dbLog {
   log: Omit<LogSchemaType, "timestamp">;
   db?: string;
@@ -28,7 +29,7 @@ async function writeLogsToDB(data: dbLog) {
 
     await LogModel.create(data.log);
   } catch (err: unknown) {
-    if (err instanceof Error) handleError(err);
+    if (err instanceof Error) handleError(errToBaseError(err, false));
   }
 }
 

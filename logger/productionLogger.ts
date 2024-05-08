@@ -3,6 +3,7 @@ import { createLogger, format, transports } from "winston";
 import path from "path";
 import dbTansport from "./dbTransport";
 import handleError from "../errorhandler/ErrorHandler";
+import { errToBaseError } from "../errors/BaseError";
 
 const { combine, timestamp, json, errors } = format;
 
@@ -13,7 +14,7 @@ const productionLogger = function () {
     level: "error",
     format: combine(errors({ stack: true })),
     exitOnError: (err: Error) => {
-      handleError(err);
+      handleError(errToBaseError(err, true));
       return true;
     },
 

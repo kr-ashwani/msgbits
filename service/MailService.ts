@@ -1,8 +1,6 @@
 import config from "config";
 import nodemailer from "nodemailer";
-import Mail from "../utilityClasses/mail/Mail";
-import path from "path";
-import ejs from "ejs";
+import { MailParams } from "../utilityClasses/mail/Mail";
 import logger from "../logger";
 
 class MailService {
@@ -12,14 +10,14 @@ class MailService {
   private constructor() {
     this.transporter = this.createConnection();
   }
-  //INSTANCE CREATE FOR MAIL
+  //Instance of Mail Service
   static getInstance() {
     if (!MailService.instance) {
       MailService.instance = new MailService();
     }
     return MailService.instance;
   }
-
+  //Mail config
   private mailConfig() {
     return {
       service: config.get<string>("SMTP_SERVICE"),
@@ -32,32 +30,17 @@ class MailService {
     };
   }
 
-  //CREATE A CONNECTION FOR LIVE
+  //create a connection
   createConnection() {
     return (this.transporter = nodemailer.createTransport(this.mailConfig()));
   }
-  //SEND MAIL
-  public async sendMail(mail: Mail) {
+  //send Mail
+  public async sendMail(mail: MailParams) {
     try {
-      await this.transporter.sendMail(mail.getMailerObj());
-      logger.info(`Mail sent successfully to ${mail.getTo()} with subject ${mail.getSubject()}`);
+      await this.transporter.sendMail(mail);
+      logger.info(`Mail sent successfully to ${mail.to} with subject ${mail.subject}`);
     } catch (err: any) {
-      console.error("failed to send mail bacause ", err.massage);
-    }
-  }
-
-  public async renderEJS(obj: { mail: Mail; err: Error; stack: string }) {
-    const errPath = path.join(__dirname, "../views/mail/errorTemplate.ejs");
-    try {
-      const htmlBody = await ejs.renderFile(errPath, {
-        mail: obj.mail.getMailerObj(),
-        err: obj.err,
-        stack: obj.stack,
-      });
-      return htmlBody;
-    } catch (err: any) {
-      console.error("failed to render Ejs because ", err.massage);
-      return "";
+      console.error("failed to send mail bacause ", err.message);
     }
   }
 }

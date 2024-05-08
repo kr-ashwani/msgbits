@@ -2,6 +2,7 @@ import config from "config";
 import { Queue } from "bullmq";
 import RedisConnection from "../redisConnection";
 import handleError from "../../errorhandler/ErrorHandler";
+import { errToBaseError } from "../../errors/BaseError";
 
 class BaseQueue<DataType, ResultType> {
   private readonly queue;
@@ -17,6 +18,10 @@ class BaseQueue<DataType, ResultType> {
     this.connection = new RedisConnection(BaseQueue.queueConfig, queueName);
     this.queue = new Queue<DataType, ResultType, string>(queueName, {
       connection: this.connection.getConnection(),
+      defaultJobOptions: {
+        removeOnComplete: true,
+        removeOnFail: true,
+      },
     });
     this.errorQueue = new Queue<DataType, ResultType, string>("Error" + queueName, {
       connection: this.connection.getConnection(),
@@ -32,14 +37,14 @@ class BaseQueue<DataType, ResultType> {
     //if error is connection refused then just return
     //connection refused is already handled by RedisConnection
     if (err.message.includes("ECONNREFUSED")) return;
-    handleError(err);
+    handleError(errToBaseError(err, true));
   }
 
   public getQueue() {
     return this.queue;
   }
   public getErrorQueue() {
-    this.errorQueue;
+    return this.errorQueue;
   }
 }
 
