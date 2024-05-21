@@ -1,4 +1,4 @@
-import redisPubSub from "../redis";
+import RedisPubSub from "../redis";
 import MailBuilder from "../utilityClasses/mail/MailBuilder";
 import renderEJS from "../viewsRender/renderEjs";
 
@@ -7,7 +7,7 @@ async function sendMailToAdminIfCritical(err: Error) {
 
   mail
     .setFrom("Msgbits Team msgbits07@gmail.com")
-    .setTo("a61ashwanikumar@gmail.com; mritunjaykr160@gmail.com")
+    .setTo("a61ashwanikumar@gmail.com; mritunjaykr160@gmail.com;ankitkumar38203@gmail.com")
     .setSubject("Mail From Msgbits App")
     .setMailSalutation("Hi Admin,")
     .setMailSignature(`Thanks & Regards,\nMsgbits Team`);
@@ -19,7 +19,7 @@ async function sendMailToAdminIfCritical(err: Error) {
   });
   mail.setHtml(html);
   // add mail to redis mail queue
-  redisPubSub.mailQueue.add("send error mail to Admin", mail);
+  RedisPubSub.getInstance().mailQueue.add("send error mail to Admin", mail);
 }
 
 function getSimplifiedStack(err: Error) {

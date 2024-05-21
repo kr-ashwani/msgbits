@@ -9,7 +9,7 @@ const SomethingWentWrongErrorHandler = (
   next: NextFunction
 ) => {
   if (!res.writableFinished) res.status(500).json({ message: "Something went wrong" });
-  handleError(errToBaseError(err, true));
+  handleError(errToBaseError(err, false));
 };
 
 export default SomethingWentWrongErrorHandler;

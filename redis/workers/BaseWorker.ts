@@ -35,7 +35,7 @@ abstract class BaseWorker<DataType, ResultType> {
       //if error is connection refused then just return
       //connection refused is already handled by RedisConnection
       if (err.message.includes("ECONNREFUSED")) return;
-      handleError(errToBaseError(err, true));
+      handleError(errToBaseError(err, false));
     });
   }
   private registerFailedJobHandler(workerName: string) {

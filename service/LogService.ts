@@ -29,7 +29,7 @@ async function writeLogsToDB(data: dbLog) {
 
     await LogModel.create(data.log);
   } catch (err: unknown) {
-    if (err instanceof Error) handleError(errToBaseError(err, false));
+    if (err instanceof Error) handleError(errToBaseError(err, true));
   }
 }
 

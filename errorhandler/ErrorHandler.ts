@@ -9,7 +9,7 @@ import sendMailToAdminIfCritical from "./sendErrToMail";
  */
 async function handleError(err: BaseError): Promise<void> {
   sendErrToLogger(err);
-  if (!err.isOperational) await sendMailToAdminIfCritical(err);
+  if (err.isCritical) await sendMailToAdminIfCritical(err);
   //await sendEventsToSentry();
 }
 

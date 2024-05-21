@@ -28,6 +28,4 @@ class RedisPubSub {
   }
 }
 
-const redisPubSub = RedisPubSub.getInstance();
-
-export default redisPubSub;
+export default RedisPubSub;

@@ -14,6 +14,6 @@ export default async function dbConnection() {
     await mongoose.connect(MONGODB_URI);
     logger.info(`connected to mongodb`);
   } catch (err: unknown) {
-    if (err instanceof Error) handleError(errToBaseError(err, false));
+    if (err instanceof Error) handleError(errToBaseError(err, true));
   }
 }

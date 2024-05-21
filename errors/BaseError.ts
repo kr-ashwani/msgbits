@@ -1,16 +1,16 @@
 class BaseError extends Error {
   readonly message: string;
   readonly name: string;
-  readonly isOperational: boolean;
+  readonly isCritical: boolean;
   readonly stack?: string;
 
-  constructor(message: string, name: string, isOperational: boolean, err?: Error) {
+  constructor(message: string, name: string, isCritical: boolean, err?: Error) {
     super(message);
     Object.setPrototypeOf(this, new.target.prototype);
 
     this.message = message;
     this.name = name;
-    this.isOperational = isOperational;
+    this.isCritical = isCritical;
     if (err) {
       this.message = err.message;
       this.name = err.name;
@@ -18,8 +18,8 @@ class BaseError extends Error {
     } else Error.captureStackTrace(this, this.constructor);
   }
 }
-function errToBaseError(err: Error, isOperational: boolean) {
-  return new BaseError("", "", isOperational, err);
+function errToBaseError(err: Error, isCritical: boolean) {
+  return new BaseError("", "", isCritical, err);
 }
 
 export { errToBaseError };
