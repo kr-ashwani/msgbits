@@ -1,8 +1,8 @@
 import { Express } from "express";
-import demoRoutes from "./demoRoute";
+import authRouter from "./authRoutes/authRoutes";
 
 function routes(app: Express) {
-  demoRoutes(app);
+  app.use(authRouter);
 }
 
 export default routes;

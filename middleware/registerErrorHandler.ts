@@ -4,8 +4,8 @@ import zodValidationErrorHandler from "./expressErrorHandler/zodValidationErrorH
 import SomethingWentWrongErrorHandler from "./expressErrorHandler/SomethingWentWrongErrorHandler";
 
 function registerErrorHandler(app: Express) {
-  app.use(mongoErrorHandler);
   app.use(zodValidationErrorHandler);
+  app.use(mongoErrorHandler);
   app.use(SomethingWentWrongErrorHandler);
 }
 

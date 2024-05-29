@@ -18,7 +18,7 @@ class BaseError extends Error {
     } else Error.captureStackTrace(this, this.constructor);
   }
 }
-function errToBaseError(err: Error, isCritical: boolean) {
+function errToBaseError(err: Error, isCritical: boolean = false) {
   return new BaseError("", "", isCritical, err);
 }
 

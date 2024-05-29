@@ -11,7 +11,7 @@ const morganMiddleware = morgan(
   { stream }
 );
 morgan.token("pid", function getId(req) {
-  return process.pid.toString();
+  return `pid-${process.pid.toString()}`;
 });
 
 export default morganMiddleware;

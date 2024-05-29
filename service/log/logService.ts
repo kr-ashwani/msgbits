@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
-import DbCollectionMissingError from "../errors/parameterMissingError/DbCollectionMissingError";
-import LogSchema, { LogSchemaType } from "../model/Log";
-import handleError from "../errorhandler/ErrorHandler";
-import { errToBaseError } from "../errors/BaseError";
+import handleError from "../../errorhandler/ErrorHandler";
+import { errToBaseError } from "../../errors/BaseError";
+import DbCollectionMissingError from "../../errors/parameterMissingError/DbCollectionMissingError";
+import LogSchema, { LogSchemaType } from "../../model/log.model";
+
 interface dbLog {
   log: Omit<LogSchemaType, "timestamp">;
   db?: string;

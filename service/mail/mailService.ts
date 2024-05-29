@@ -1,7 +1,7 @@
 import config from "config";
 import nodemailer from "nodemailer";
-import { MailParams } from "../utilityClasses/mail/Mail";
-import logger from "../logger";
+import { MailParams } from "../../utilityClasses/mail/Mail";
+import logger from "../../logger";
 
 class MailService {
   private static instance: MailService;

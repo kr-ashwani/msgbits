@@ -19,7 +19,7 @@ addColors(colors);
 const MONGODB_URI_LOG = config.get<string>("MONGODB_URI_LOG");
 const devLogger = () => {
   const myFormat = printf(({ level, message, timestamp }) => {
-    return `${timestamp} ${level}: ${message}`;
+    return `${timestamp} pid:${process.pid} ${level}: ${message}`;
   });
 
   return createLogger({

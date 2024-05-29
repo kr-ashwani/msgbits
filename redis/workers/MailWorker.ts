@@ -1,4 +1,4 @@
-import mailService from "../../service/MailService";
+import mailService from "../../service/mail/mailService";
 import { MailParams } from "../../utilityClasses/mail/Mail";
 import { MailQueueName } from "../queues/MailQueue";
 import BaseWorker from "./BaseWorker";
