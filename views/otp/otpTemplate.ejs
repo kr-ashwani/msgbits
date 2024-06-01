@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+
+    <%- include('../mail/styles.ejs') %>
+  </head>
+  <body>
+    <p class="bold">Hi <%= name %>,</p>
+    <br />
+    <p class="bold">Congratulations for registering to Msgbits App.</p>
+    <br />
+    <div class="log">
+      <div class="desc">
+        <p>OTP for Account verification is <span><%= otp %></span></p>
+      </div>
+      <div class="desc">
+        <p>OTP is valid only for 5 minutes.</p>
+      </div>
+    </div>
+    <br />
+    <p class="bold">Thanks & Regards,</p>
+    <p class="bold">Msgbits Team</p>
+  </body>
+</html>

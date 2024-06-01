@@ -31,7 +31,7 @@ class MailService {
   }
 
   //create a connection
-  createConnection() {
+  private createConnection() {
     return (this.transporter = nodemailer.createTransport(this.mailConfig()));
   }
   //send Mail

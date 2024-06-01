@@ -1,5 +1,6 @@
 import { Schema, model, Document, InferSchemaType, HydratedDocument, Model } from "mongoose";
 import bcrypt from "bcrypt";
+import { number } from "zod";
 
 export interface IUser {
   email: string;
@@ -7,6 +8,9 @@ export interface IUser {
   password: string;
   createdAt: Date;
   updatedAt: Date;
+  isVerified: boolean;
+  authCode: number;
+  authCodeValidTime: number;
   comparePassword: (candidatePassword: string) => Promise<boolean>;
 }
 // User Schema
@@ -24,6 +28,20 @@ const userSchema = new Schema<IUser>(
     password: {
       type: String,
       required: [true, "password is required"],
+    },
+    isVerified: {
+      type: Boolean,
+      default: false,
+    },
+    authCode: {
+      type: Number,
+      required: [true, "Auth code is required"],
+      min: 100000,
+      max: 999999,
+    },
+    authCodeValidTime: {
+      type: Number,
+      required: [true, "Auth Code valid timestamp is missing"],
     },
   },
   {

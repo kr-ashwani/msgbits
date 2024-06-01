@@ -4,7 +4,10 @@ import { DmlDAO } from "./DmlDAO";
 import { HydratedDocument, CreateOptions } from "mongoose";
 import { RowMapper } from "./RowMapper/RowMapper";
 import { UserInput } from "../schema/user/userSchema";
+import { MathUtil } from "../utils/MathUtil";
+import { sendMail } from "../service/mail/sendMail";
 
+export type userDoc = Omit<IUser, "createdAt" | "updatedAt" | "comparePassword">;
 class UserDAO extends DmlDAO<UserInput, IUser> {
   /**
    *
@@ -18,13 +21,21 @@ class UserDAO extends DmlDAO<UserInput, IUser> {
     options?: CreateOptions
   ) {
     try {
-      let userResultSet: HydratedDocument<IUser> | HydratedDocument<IUser>[];
+      const userDocs: userDoc[] = [];
+      if (!Array.isArray(docs)) docs = [docs];
 
-      if (Array.isArray(docs)) userResultSet = await UserModel.create(docs, options);
-      else userResultSet = await UserModel.create(docs);
+      docs.forEach((doc) => {
+        const isVerified = false;
+        const authCode = MathUtil.generateRandomNumber(100000, 999999);
+        const authCodeValidTime = Date.now() + 5 * 60 * 1000;
+        const user = { ...doc, isVerified, authCode, authCodeValidTime };
+        sendMail.sendOTPtoUser(user);
+        userDocs.push(user);
+      });
 
-      if (Array.isArray(userResultSet)) userResultSet.map((row) => rowMapper.mapRow(row));
-      else rowMapper.mapRow(userResultSet);
+      const userResultSet = await UserModel.create(userDocs, options);
+
+      userResultSet.map((row) => rowMapper.mapRow(row));
     } catch (err: any) {
       throw new Error(err);
     }

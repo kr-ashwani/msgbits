@@ -14,15 +14,18 @@
   .bold {
     font-weight: bold;
   }
-  .errorDesc {
+  .errorDesc,
+  .desc {
     display: flex;
     gap: 10px;
     padding-bottom: 5px;
   }
-  .errorDesc > p:first-child {
+  .errorDesc > p:first-child,
+  .desc > p:first-child {
     width: 150px;
   }
-  .errorDesc > p:last-child {
+  .errorDesc > p:last-child,
+  .desc > p:last-child {
     flex-grow: 1;
     overflow-x: scroll;
   }

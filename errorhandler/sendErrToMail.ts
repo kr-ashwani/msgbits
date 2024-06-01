@@ -1,25 +1,8 @@
-import RedisPubSub from "../redis";
-import MailBuilder from "../utilityClasses/mail/MailBuilder";
-import renderEJS from "../viewsRender/renderEjs";
+import { sendMail } from "../service/mail/sendMail";
 
 async function sendMailToAdminIfCritical(err: Error) {
-  const mail = new MailBuilder();
-
-  mail
-    .setFrom("Msgbits Team msgbits07@gmail.com")
-    .setTo("a61ashwanikumar@gmail.com; mritunjaykr160@gmail.com;ankitkumar38203@gmail.com")
-    .setSubject("Mail From Msgbits App")
-    .setMailSalutation("Hi Admin,")
-    .setMailSignature(`Thanks & Regards,\nMsgbits Team`);
-
-  const html = await renderEJS.renderEJS("ERROR_MAIL", {
-    mail,
-    err,
-    stack: getSimplifiedStack(err),
-  });
-  mail.setHtml(html);
-  // add mail to redis mail queue
-  RedisPubSub.getInstance().mailQueue.add("send error mail to Admin", mail);
+  err.stack = getSimplifiedStack(err);
+  sendMail.sendErrorMail(err);
 }
 
 function getSimplifiedStack(err: Error) {

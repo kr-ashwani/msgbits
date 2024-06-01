@@ -6,7 +6,6 @@ class BaseError extends Error {
 
   constructor(message: string, name: string, isCritical: boolean, err?: Error) {
     super(message);
-    Object.setPrototypeOf(this, new.target.prototype);
 
     this.message = message;
     this.name = name;
@@ -16,6 +15,8 @@ class BaseError extends Error {
       this.name = err.name;
       this.stack = err.stack;
     } else Error.captureStackTrace(this, this.constructor);
+
+    Object.setPrototypeOf(this, new.target.prototype);
   }
 }
 function errToBaseError(err: Error, isCritical: boolean = false) {

@@ -7,6 +7,7 @@ class RenderEJS {
 
   constructor() {
     this.viewLocation.set("ERROR_MAIL", path.join(__dirname, "../views/mail/errorTemplate.ejs"));
+    this.viewLocation.set("OTP_MAIL", path.join(__dirname, "../views/otp/otpTemplate.ejs"));
   }
   /**
    * Convert dynamic HTML(ejs) to string format
@@ -20,22 +21,8 @@ class RenderEJS {
       const htmlBody = await ejs.renderFile(ejsPath, opts);
       return htmlBody;
     } catch (err: unknown) {
-      if (err instanceof Error) return this.failedRenderEJS(err);
-      return "";
-    }
-  }
-
-  private async failedRenderEJS(err: Error) {
-    const ejsPath = path.join(__dirname, "../views/viewRenderError.ejs");
-    try {
-      const htmlBody = await ejs.renderFile(ejsPath, { err });
-      return htmlBody;
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.error("failed to render Ejs because ", err.message);
-        return `"failed to render Ejs because ${err.message}`;
-      }
-      return "failed to render Ejs at viewsRender/renderEjs.ts file";
+      if (err instanceof Error) console.error("failed to render Ejs because ", err.message);
+      return `HTML did not render`;
     }
   }
 }

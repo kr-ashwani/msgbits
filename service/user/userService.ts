@@ -15,7 +15,15 @@ export async function createUser(input: UserInput) {
       })
     );
     //we are sure user will have atleast 1 element
-    return omit(user[0].toJSON(), "password", "_id", "__v");
+    return omit(
+      user[0].toJSON(),
+      "password",
+      "_id",
+      "__v",
+      "isVerified",
+      "authCode",
+      "authCodeValidTime"
+    );
   } catch (e: any) {
     throw new Error(e);
   }

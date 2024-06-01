@@ -8,7 +8,7 @@ interface errorTemplateMail {
 }
 
 interface otpTemplateOTP {
-  user: string;
+  name: string;
   otp: number;
 }
 
