@@ -5,6 +5,7 @@ import { MongoError, MongoServerError } from "mongodb";
 
 const mongoErrorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof mongoose.MongooseError) {
+    console.log("yoo");
     let errMsg = "";
     if (
       err instanceof mongoose.Error.ValidationError ||
@@ -17,12 +18,7 @@ const mongoErrorHandler = (err: Error, req: Request, res: Response, next: NextFu
       errMsg = "database document not found";
     else errMsg = "database error";
 
-    clientRes
-      .setRes(res)
-      .setStatus(404)
-      .setMessage("database validation failed")
-      .setData(err.message)
-      .send();
+    clientRes.send(res, "Bad Request", "database validation failed", err.message);
     return;
   }
   next(err);

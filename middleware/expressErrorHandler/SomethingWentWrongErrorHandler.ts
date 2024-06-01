@@ -10,12 +10,7 @@ const SomethingWentWrongErrorHandler = (
   next: NextFunction
 ) => {
   if (!res.writableFinished)
-    clientRes
-      .setRes(res)
-      .setStatus(500)
-      .setMessage("Something went wrong")
-      .setData(err.message)
-      .send();
+    clientRes.send(res, "Internal Server Error", "Something went wrong", err.message);
 
   handleError(errToBaseError(err, false));
 };

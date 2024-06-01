@@ -1,12 +1,21 @@
+import { HydratedDocument } from "mongoose";
 import { UserInput } from "./../../schema/user/userSchema";
 import { omit } from "lodash";
-import UserModel from "../../model/user.model";
+import UserModel, { IUser } from "../../model/user.model";
+import { userDAO } from "../../Dao/UserDAO";
+import { UserRowMapper } from "../../Dao/RowMapper/UserRowMapper";
 
 export async function createUser(input: UserInput) {
   try {
-    const user = await UserModel.create(input);
-
-    return omit(user.toJSON(), "password", "_id", "__v");
+    const user: HydratedDocument<IUser>[] = [];
+    await userDAO.create(
+      input,
+      new UserRowMapper((data) => {
+        user.push(data);
+      })
+    );
+    //we are sure user will have atleast 1 element
+    return omit(user[0].toJSON(), "password", "_id", "__v");
   } catch (e: any) {
     throw new Error(e);
   }
