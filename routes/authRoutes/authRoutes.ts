@@ -4,6 +4,9 @@ import verifyUserByOTPController from "../../controllers/auth/verifyUserByOTP";
 import asyncWrapper from "../../middleware/asyncWrapper";
 import validateResource from "../../middleware/validateResource";
 import { createUserSchema } from "../../schema/user/userSchema";
+import loginController from "../../controllers/auth/loginController";
+import logoutController from "../../controllers/auth/logoutController";
+import { validateUserSchema } from "../../schema/user/validateUserSchema";
 
 const express = require("express");
 
@@ -16,5 +19,11 @@ authRouter
 authRouter
   .route("/verifyaccount")
   .post(validateResource(createOTPSchema), asyncWrapper(verifyUserByOTPController));
+
+authRouter
+  .route("/login")
+  .post(validateResource(validateUserSchema), asyncWrapper(loginController));
+
+authRouter.route("/logout").get(asyncWrapper(logoutController));
 
 export default authRouter;

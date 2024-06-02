@@ -40,6 +40,20 @@ const HTTPStatusToCode = {
  * so, All response on client side will either have ClientResponseSuccess or ClientResponseError schema
  */
 class ClientResponse {
+  createSuccessObj(message?: string, data?: any): ClientResponseSuccess {
+    return {
+      success: true,
+      message: message || "No data to preview",
+      data: data || "No data to preview",
+    };
+  }
+  createErrorObj(message?: string, err?: any): ClientResponseError {
+    return {
+      success: false,
+      message: message || "Something went wrong",
+      error: err || "Something went wrong",
+    };
+  }
   /**
    *
    * @param res  A Express response Object
@@ -47,35 +61,47 @@ class ClientResponse {
    * @param message Message to client refarding the response
    * @param dataOrErr sending data or error
    */
-  send(res: Response, status: keyof typeof HTTPStatusToCode, message: string, dataOrErr: any) {
+  send(
+    res: Response,
+    status: keyof typeof HTTPStatusToCode,
+    responseObj: ClientResponseSuccess | ClientResponseError
+  ) {
     let resObj: ClientResponseSuccess | ClientResponseError;
     const httpCode = HTTPStatusToCode[status];
-    if (httpCode >= 200 && httpCode < 300) {
+    if (responseObj.success && httpCode >= 200 && httpCode < 300)
       resObj = {
         success: true,
-        message: message,
-        data: dataOrErr,
+        message: responseObj.message,
+        data: responseObj.data,
       };
-    } else {
+    else
       resObj = {
         success: false,
-        message: message,
-        error: dataOrErr,
+        message: responseObj.message,
+        // if response object is success but httpCode doesnot support it
+        // so, it will be finally marked as error
+        error: responseObj.success ? responseObj.data : responseObj.error,
       };
-    }
 
     res.status(httpCode).json(resObj);
   }
   sendJWTToken(res: Response, payload: userJWTPayload) {
     // refresh_exp_time is in seconds but maxAge accepsts millisecods
     const refresh_exp_time = config.get<number>("REFRESH_TOKEN_EXP_TIME");
-    const jwtToken = jwtService.createToken(payload);
+    const jwtToken = jwtService.createToken({
+      name: payload.name,
+      email: payload.email,
+      createdAt: payload.createdAt,
+    });
     res.cookie("_auth_token", jwtToken, {
       httpOnly: true,
       // secure: true,
       maxAge: refresh_exp_time * 1000,
       sameSite: "lax",
     });
+  }
+  clearAuthJWTToken(res: Response) {
+    res.clearCookie("_auth_token");
   }
 }
 

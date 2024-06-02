@@ -3,6 +3,7 @@ import { IUser } from "../../model/user.model";
 import { userDAO } from "../../Dao/UserDAO";
 import { UserRowMapper } from "../../Dao/RowMapper/UserRowMapper";
 import { OTPSchema } from "../../schema/user/OTPSchema";
+import { clientRes } from "../../utilityClasses/clientResponse";
 
 export async function verifyOTPService(input: OTPSchema) {
   try {
@@ -27,22 +28,18 @@ export async function verifyOTPService(input: OTPSchema) {
         user.push(data);
       })
     );
-    const res = {
-      success: false,
-      message: "Something went wrong",
-      error: "Something went wrong",
-      data: { email: "", name: "", createdAt: 0 },
-    };
+    const successRes = clientRes.createSuccessObj();
+    const failureRes = clientRes.createErrorObj();
     // if previous update is successful then update query will return that user
     if (user.length === 1) {
-      res.success = true;
-      res.message = `user with email ${user[0].email} is now verified.`;
-      res.data = {
+      successRes.success = true;
+      successRes.message = `user with email ${user[0].email} is now verified.`;
+      successRes.data = {
         email: user[0].email,
         name: user[0].name,
         createdAt: user[0].createdAt.getTime(),
       };
-      return res;
+      return successRes;
     }
 
     // if user update is unsuccessful, then find used by input email and check what wrong happened
@@ -55,14 +52,14 @@ export async function verifyOTPService(input: OTPSchema) {
       })
     );
 
-    if (user.length !== 1) res.message = "User is not registered";
+    if (user.length !== 1) failureRes.message = "User is not registered";
     else if (user[0].isVerified)
-      res.message = `User with email ${user[0].email} is already registered. Try logging in`;
-    else if (user[0].authCode !== Number(input.otp)) res.message = "OTP did not match";
-    else if (user[0].authCodeValidTime <= Date.now()) res.message = "OTP has expired";
+      failureRes.message = `User with email ${user[0].email} is already registered. Try logging in`;
+    else if (user[0].authCode !== Number(input.otp)) failureRes.message = "OTP did not match";
+    else if (user[0].authCodeValidTime <= Date.now()) failureRes.message = "OTP has expired";
 
-    res.error = res.message;
-    return res;
+    failureRes.error = failureRes.message;
+    return failureRes;
   } catch (e: any) {
     throw new Error(e);
   }

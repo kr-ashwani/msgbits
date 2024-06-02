@@ -1,24 +1,23 @@
 import { Request, Response, NextFunction } from "express";
 import { clientRes } from "../../utilityClasses/clientResponse";
 import mongoose from "mongoose";
-import { MongoError, MongoServerError } from "mongodb";
 
 const mongoErrorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof mongoose.MongooseError) {
-    console.log("yoo");
-    let errMsg = "";
+    const failureRes = clientRes.createErrorObj();
     if (
       err instanceof mongoose.Error.ValidationError ||
       err instanceof mongoose.Error.ValidatorError
     )
-      errMsg = "database validation failed";
+      failureRes.message = "database validation failed";
     else if (err instanceof mongoose.Error.DocumentNotFoundError)
-      errMsg = "database document not found";
+      failureRes.message = "database document not found";
     else if (err instanceof mongoose.Error.DocumentNotFoundError)
-      errMsg = "database document not found";
-    else errMsg = "database error";
+      failureRes.message = "database document not found";
+    else failureRes.message = "database error";
 
-    clientRes.send(res, "Bad Request", "database validation failed", err.message);
+    failureRes.error = failureRes.message;
+    clientRes.send(res, "Bad Request", failureRes);
     return;
   }
   next(err);

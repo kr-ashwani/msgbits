@@ -4,15 +4,13 @@ import { clientRes } from "../../utilityClasses/clientResponse";
 
 const zodValidationErrorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ZodError) {
-    clientRes.send(
-      res,
-      "Bad Request",
-      "Validation failed",
-      err.flatten((issue) => ({
-        message: issue.message,
-        errorCode: issue.code,
-      }))
-    );
+    const failureRes = clientRes.createErrorObj();
+    failureRes.message = "Validation failed";
+    failureRes.error = err.flatten((issue) => ({
+      message: issue.message,
+      errorCode: issue.code,
+    }));
+    clientRes.send(res, "Bad Request", failureRes);
     return;
   }
   next(err);
