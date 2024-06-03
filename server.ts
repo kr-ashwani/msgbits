@@ -31,6 +31,10 @@ class App {
     host: config.get<string>("REDIS_HOST"),
     lazyConnect: true,
   };
+  private static readonly socketUIConfig = {
+    username: config.get<string>("SOCKETUI_USERNAME"),
+    password: config.get<string>("SOCKETUI_PASSWORD"),
+  };
   constructor() {
     this.app = express();
     this.server = http.createServer(this.app);
@@ -64,8 +68,8 @@ class App {
       serverId: `${os.hostname()}#${process.pid}`,
       auth: {
         type: "basic",
-        username: "admin",
-        password: "$2b$10$qL1F0PsopWtEXSVjWbXTtuF6PdcGpw8FLUlu6JkmVFQ0dySeV2S72",
+        username: App.socketUIConfig.username,
+        password: App.socketUIConfig.password,
       },
     });
     setupWorker(io);
