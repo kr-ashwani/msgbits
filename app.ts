@@ -8,6 +8,9 @@ const numCPUs = availableParallelism();
 if (cluster.isPrimary) {
   console.log(`Master process with pid ${process.pid} is running`);
 
+  //start server and initialize SocketIO stickySession
+  App.startServerAndinitializeSocketIOstickySession();
+
   for (let i = 0; i < (numCPUs >= 2 ? 2 : 1); i++) {
     // spawn worker cluster
     cluster.fork();

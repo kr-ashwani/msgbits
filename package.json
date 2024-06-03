@@ -13,7 +13,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@socket.io/admin-ui": "^0.5.1",
     "@socket.io/redis-streams-adapter": "^0.2.2",
+    "@socket.io/sticky": "^1.0.4",
     "bcrypt": "^5.1.1",
     "bullmq": "^5.7.3",
     "config": "^3.3.11",

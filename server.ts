@@ -1,3 +1,4 @@
+import path from "path";
 import http from "node:http";
 import "dotenv/config.js";
 import "./utils/registerProcessUncaughtError";
@@ -16,11 +17,14 @@ import { Server } from "socket.io";
 import { createAdapter } from "@socket.io/redis-streams-adapter";
 import RedisConnection from "./redis/redisConnection";
 import registerSocketHandlers from "./socketEventHandlers/registerSocketHandlers";
+import { instrument } from "@socket.io/admin-ui";
+import os from "os";
+const { setupMaster, setupWorker } = require("@socket.io/sticky");
 
 class App {
   private readonly app;
   private readonly server;
-  private readonly PORT = config.get<number>("PORT");
+  static readonly PORT = config.get<number>("PORT");
 
   private static readonly redisConfig = {
     port: config.get<number>("REDIS_PORT"),
@@ -47,11 +51,28 @@ class App {
 
     const io = new Server({
       adapter: createAdapter(redisClient),
+      cors: {
+        credentials: true,
+      },
     });
     io.listen(this.server);
     io.on("connection", (socket) => {
       registerSocketHandlers(socket, io);
     });
+    // Socket io Admin UI
+    instrument(io, {
+      serverId: `${os.hostname()}#${process.pid}`,
+      auth: {
+        type: "basic",
+        username: "admin",
+        password: "$2b$10$qL1F0PsopWtEXSVjWbXTtuF6PdcGpw8FLUlu6JkmVFQ0dySeV2S72",
+      },
+    });
+    setupWorker(io);
+    this.initializeSocketIOadminUI();
+  }
+  private initializeSocketIOadminUI() {
+    this.app.use("/admin/socketui", express.static(path.join(__dirname, "./views/socketio/dist")));
   }
   //All middlewares except Error Handler middleware
   private initializeMiddlewares() {
@@ -72,20 +93,30 @@ class App {
   // app will bind port number
   private appHandler() {
     if (cluster.isPrimary)
-      logger.info(`Server with pid ${process.pid} is running at http://localhost:${this.PORT}`);
+      logger.info(`Server with pid ${process.pid} is running at http://localhost:${App.PORT}`);
     else
       logger.info(
-        `Server Worker process with pid ${process.pid} is running at http://localhost:${this.PORT}`
+        `Server Worker process with pid ${process.pid} is running at http://localhost:${App.PORT}`
       );
     dbConnection();
     RedisPubSub.getInstance();
 
-    swaggerDocs(this.app, this.PORT);
+    swaggerDocs(this.app, App.PORT);
   }
 
   // public method to start Express App
   public run() {
-    this.server.listen(this.PORT, this.appHandler.bind(this));
+    //this.server.listen(this.PORT, this.appHandler.bind(this));
+    this.appHandler();
+  }
+  // used by master process to start App on given port and initialize SocketIO stickySession
+  static startServerAndinitializeSocketIOstickySession() {
+    const httpServer = http.createServer();
+    //socket io sticky session master setup
+    setupMaster(httpServer, {
+      loadBalancingMethod: "least-connection", // either "random", "round-robin" or "least-connection"
+    });
+    httpServer.listen(App.PORT);
   }
 }
 
