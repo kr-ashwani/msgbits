@@ -4,7 +4,7 @@ class BaseError extends Error {
   readonly isCritical: boolean;
   readonly stack?: string;
 
-  constructor(message: string, name: string, isCritical: boolean, err?: Error) {
+  constructor(message: string, name: string, isCritical: boolean = false, err?: Error) {
     super(message);
 
     this.message = message;

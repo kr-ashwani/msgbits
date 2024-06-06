@@ -1,15 +1,19 @@
 import { Request, Response, NextFunction } from "express";
-import { ZodError, ZodIssue } from "zod";
-import { clientRes } from "../../utilityClasses/clientResponse";
+import { ZodError } from "zod";
+import { ClientResponse } from "../../utilityClasses/clientResponse";
 
 const zodValidationErrorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
   if (err instanceof ZodError) {
-    const failureRes = clientRes.createErrorObj();
-    failureRes.message = "Validation failed";
-    failureRes.error = err.flatten((issue) => ({
-      message: issue.message,
-      errorCode: issue.code,
-    }));
+    const clientRes = new ClientResponse();
+
+    const failureRes = clientRes.createErrorObj(
+      "Validation failed",
+      err.flatten((issue) => ({
+        message: issue.message,
+        errorCode: issue.code,
+      }))
+    );
+
     clientRes.send(res, "Bad Request", failureRes);
     return;
   }

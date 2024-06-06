@@ -3,16 +3,16 @@ import { Response } from "express";
 import { jwtService, userJWTPayload } from "../../service/jwt/JwtService";
 
 //Client will receive ClientResponseSuccess schema on successfull response
-interface ClientResponseSuccess {
+interface ClientResponseSuccess<T> {
   success: true;
   message: string;
-  data: any;
+  data: T;
 }
 //Client will receive ClientResponseError schema on response failure
-interface ClientResponseError {
+interface ClientResponseError<T> {
   success: false;
   message: string;
-  error: any;
+  error: T;
 }
 //HTTP status to code mapping
 const HTTPStatusToCode = {
@@ -40,18 +40,32 @@ const HTTPStatusToCode = {
  * so, All response on client side will either have ClientResponseSuccess or ClientResponseError schema
  */
 class ClientResponse {
-  createSuccessObj(message?: string, data?: any): ClientResponseSuccess {
-    return {
+  private succ_res: { success: true; message: string };
+  private fail_res: { success: false; message: string };
+
+  constructor() {
+    this.succ_res = {
       success: true,
-      message: message || "No data to preview",
-      data: data || "No data to preview",
+      message: "No data to preview",
+    };
+    this.fail_res = {
+      success: false,
+      message: "Something went wrong",
     };
   }
-  createErrorObj(message?: string, err?: any): ClientResponseError {
+
+  createSuccessObj<T>(message: string, data: T): ClientResponseSuccess<T> {
     return {
-      success: false,
-      message: message || "Something went wrong",
-      error: err || "Something went wrong",
+      ...this.succ_res,
+      message,
+      data,
+    };
+  }
+  createErrorObj<T>(message: string, error: T): ClientResponseError<T> {
+    return {
+      ...this.fail_res,
+      message,
+      error,
     };
   }
   /**
@@ -61,12 +75,12 @@ class ClientResponse {
    * @param message Message to client refarding the response
    * @param dataOrErr sending data or error
    */
-  send(
+  send<T, U>(
     res: Response,
     status: keyof typeof HTTPStatusToCode,
-    responseObj: ClientResponseSuccess | ClientResponseError
+    responseObj: ClientResponseSuccess<T> | ClientResponseError<U>
   ) {
-    let resObj: ClientResponseSuccess | ClientResponseError;
+    let resObj: ClientResponseSuccess<T> | ClientResponseError<U>;
     const httpCode = HTTPStatusToCode[status];
     if (responseObj.success && httpCode >= 200 && httpCode < 300)
       resObj = {
@@ -80,7 +94,7 @@ class ClientResponse {
         message: responseObj.message,
         // if response object is success but httpCode doesnot support it
         // so, it will be finally marked as error
-        error: responseObj.success ? responseObj.data : responseObj.error,
+        error: responseObj.success ? (responseObj.data as any) : responseObj.error,
       };
 
     res.status(httpCode).json(resObj);
@@ -105,4 +119,4 @@ class ClientResponse {
   }
 }
 
-export const clientRes = new ClientResponse();
+export { ClientResponse };

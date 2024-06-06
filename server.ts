@@ -1,7 +1,8 @@
-import path from "path";
-import http from "node:http";
 import "dotenv/config.js";
 import "./utils/registerProcessUncaughtError";
+import path from "path";
+import cookieParser from "cookie-parser";
+import http from "node:http";
 import express from "express";
 import config from "config";
 import dbConnection from "./utils/dbConnection";
@@ -19,7 +20,13 @@ import RedisConnection from "./redis/redisConnection";
 import registerSocketHandlers from "./socketEventHandlers/registerSocketHandlers";
 import { instrument } from "@socket.io/admin-ui";
 import os from "os";
-const { setupMaster, setupWorker } = require("@socket.io/sticky");
+import { setupMaster, setupWorker } from "@socket.io/sticky";
+import {
+  SocketAuthData,
+  validateSocketConnection,
+} from "./socketEventHandlers/validateSocketConnection";
+import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import "./model/role.model";
 
 class App {
   private readonly app;
@@ -53,13 +60,14 @@ class App {
   private initializeRedisAdapter() {
     const redisClient = new RedisConnection(App.redisConfig, `Redis Adapter`).getConnection();
 
-    const io = new Server({
+    const io = new Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, SocketAuthData>({
       adapter: createAdapter(redisClient),
       cors: {
         credentials: true,
       },
     });
     io.listen(this.server);
+    io.use(validateSocketConnection);
     io.on("connection", (socket) => {
       registerSocketHandlers(socket, io);
     });
@@ -80,6 +88,7 @@ class App {
   }
   //All middlewares except Error Handler middleware
   private initializeMiddlewares() {
+    this.app.use(cookieParser());
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(morganMiddleware);

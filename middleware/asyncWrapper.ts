@@ -5,9 +5,9 @@ import { NextFunction, Request, Response } from "express";
  * @param callback
  * @returns
  */
-function asyncWrapper(callback: (req: Request, res: Response) => void) {
+function asyncWrapper(callback: (req: Request, res: Response, nextfn: NextFunction) => void) {
   return function (req: Request, res: Response, next: NextFunction) {
-    Promise.resolve(callback(req, res)).catch((err) => next(err));
+    Promise.resolve(callback(req, res, next)).catch((err) => next(err));
   };
 }
 

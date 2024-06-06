@@ -3,7 +3,7 @@ import { IUser } from "../../model/user.model";
 import { userDAO } from "../../Dao/UserDAO";
 import { UserRowMapper } from "../../Dao/RowMapper/UserRowMapper";
 import { OTPSchema } from "../../schema/user/OTPSchema";
-import { clientRes } from "../../utilityClasses/clientResponse";
+import { ClientResponse } from "../../utilityClasses/clientResponse";
 
 export async function verifyOTPService(input: OTPSchema) {
   try {
@@ -28,19 +28,14 @@ export async function verifyOTPService(input: OTPSchema) {
         user.push(data);
       })
     );
-    const successRes = clientRes.createSuccessObj();
-    const failureRes = clientRes.createErrorObj();
+    const response = new ClientResponse();
     // if previous update is successful then update query will return that user
-    if (user.length === 1) {
-      successRes.success = true;
-      successRes.message = `user with email ${user[0].email} is now verified.`;
-      successRes.data = {
+    if (user.length === 1)
+      return response.createSuccessObj(`user with email ${user[0].email} is now verified.`, {
         email: user[0].email,
         name: user[0].name,
-        createdAt: user[0].createdAt.getTime(),
-      };
-      return successRes;
-    }
+        createdAt: user[0].createdAt,
+      });
 
     // if user update is unsuccessful, then find used by input email and check what wrong happened
     await userDAO.find(
@@ -52,14 +47,14 @@ export async function verifyOTPService(input: OTPSchema) {
       })
     );
 
-    if (user.length !== 1) failureRes.message = "User is not registered";
+    let failureMsg = "";
+    if (user.length !== 1) failureMsg = "User is not registered";
     else if (user[0].isVerified)
-      failureRes.message = `User with email ${user[0].email} is already registered. Try logging in`;
-    else if (user[0].authCode !== Number(input.otp)) failureRes.message = "OTP did not match";
-    else if (user[0].authCodeValidTime <= Date.now()) failureRes.message = "OTP has expired";
+      failureMsg = `User with email ${user[0].email} is already registered. Try logging in`;
+    else if (user[0].authCode !== Number(input.otp)) failureMsg = "OTP did not match";
+    else if (user[0].authCodeValidTime <= Date.now()) failureMsg = "OTP has expired";
 
-    failureRes.error = failureRes.message;
-    return failureRes;
+    return response.createErrorObj(failureMsg, failureMsg);
   } catch (e: any) {
     throw new Error(e);
   }

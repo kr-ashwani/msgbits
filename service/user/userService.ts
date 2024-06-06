@@ -1,11 +1,11 @@
 import { HydratedDocument } from "mongoose";
 import { UserInput } from "./../../schema/user/userSchema";
 import { omit } from "lodash";
-import UserModel, { IUser } from "../../model/user.model";
+import { IUser } from "../../model/user.model";
 import { userDAO } from "../../Dao/UserDAO";
 import { UserRowMapper } from "../../Dao/RowMapper/UserRowMapper";
 import { sendMail } from "../mail/sendMail";
-import { clientRes } from "../../utilityClasses/clientResponse";
+import { ClientResponse } from "../../utilityClasses/clientResponse";
 
 export async function createUser(input: UserInput) {
   try {
@@ -35,6 +35,23 @@ export async function createUser(input: UserInput) {
 
 export async function findAndValidateUser(input: Omit<UserInput, "name">) {
   try {
+    const res = await findUserByEmail({ email: input.email });
+
+    if (!res.success) return res;
+
+    const isValidUser = await res.data.originalUser.comparePassword(input.password);
+    //we are sure user will have atleast 1 element
+
+    const newRes = new ClientResponse();
+    if (isValidUser) return newRes.createSuccessObj(res.message, res.data.trimmedUser);
+    else return newRes.createErrorObj("password did not match", "password did not match");
+  } catch (e: any) {
+    throw new Error(e);
+  }
+}
+
+export async function findUserByEmail(input: { email: string }) {
+  try {
     const user: HydratedDocument<IUser>[] = [];
     await userDAO.find(
       {
@@ -45,35 +62,26 @@ export async function findAndValidateUser(input: Omit<UserInput, "name">) {
       })
     );
 
-    const successRes = clientRes.createSuccessObj();
-    const failureRes = clientRes.createErrorObj();
+    const response = new ClientResponse();
 
-    if (user.length !== 1) {
-      failureRes.message = `User with email ${input.email} is not registered. Try signing up`;
-      failureRes.error = failureRes.message;
-      return failureRes;
-    }
+    if (user.length !== 1)
+      return response.createErrorObj(
+        `User with email ${input.email} is not registered. Try signing up`,
+        `User with email ${input.email} is not registered. Try signing up`
+      );
 
-    const isValidUser = await user[0].comparePassword(input.password);
-    //we are sure user will have atleast 1 element
-
-    if (isValidUser) {
-      successRes.data = omit(
+    return response.createSuccessObj("User found", {
+      originalUser: user[0],
+      trimmedUser: omit(
         user[0].toJSON(),
         "password",
         "_id",
         "__v",
-        "isVerified",
         "authCode",
-        "authCodeValidTime"
-      );
-      successRes.message = "Login is sucessful";
-      return successRes;
-    } else {
-      failureRes.message = `password did not match`;
-      failureRes.error = failureRes.message;
-      return failureRes;
-    }
+        "authCodeValidTime",
+        "comparePassword"
+      ),
+    });
   } catch (e: any) {
     throw new Error(e);
   }

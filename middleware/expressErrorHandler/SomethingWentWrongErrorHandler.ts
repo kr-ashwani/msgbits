@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import handleError from "../../errorhandler/ErrorHandler";
 import { errToBaseError } from "../../errors/BaseError";
-import { clientRes } from "../../utilityClasses/clientResponse";
+import { ClientResponse } from "../../utilityClasses/clientResponse";
 
 const SomethingWentWrongErrorHandler = (
   err: Error,
@@ -9,10 +9,13 @@ const SomethingWentWrongErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  const failureRes = clientRes.createErrorObj();
-  failureRes.message = "Something went wrong";
-  failureRes.error = err.message;
-  if (!res.writableFinished) clientRes.send(res, "Internal Server Error", failureRes);
+  const clientRes = new ClientResponse();
+  if (!res.writableFinished)
+    clientRes.send(
+      res,
+      "Internal Server Error",
+      clientRes.createErrorObj("Something went wrong", err.message)
+    );
 
   handleError(errToBaseError(err, false));
 };

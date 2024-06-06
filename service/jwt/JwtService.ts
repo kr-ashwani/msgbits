@@ -1,19 +1,19 @@
 import config from "config";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
-export interface userJWTPayload {
+export type userJWTPayload = {
   name: string;
   email: string;
-  createdAt: number;
-}
+  createdAt: Date;
+} & JwtPayload;
 
 class JwtService {
   private refresh_secret_key = config.get<string>("REFRESH_TOKEN_SECRET_KEY");
   private refresh_exp_time = config.get<number>("REFRESH_TOKEN_EXP_TIME");
   verifyToken(token: string) {
     try {
-      jwt.verify(token, this.refresh_secret_key);
-      return true;
+      const jwtPayload = jwt.verify(token, this.refresh_secret_key);
+      return jwtPayload as userJWTPayload;
     } catch (err) {
       return false;
     }
