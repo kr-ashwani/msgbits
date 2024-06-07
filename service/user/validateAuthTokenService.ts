@@ -1,6 +1,6 @@
 import { ClientResponse } from "../../utilityClasses/clientResponse";
 import { jwtService } from "../jwt/JwtService";
-import { findUserByEmail } from "./userService";
+import { userService } from "./userService";
 
 export async function validateAuthTokenService(cookie: any) {
   try {
@@ -15,7 +15,7 @@ export async function validateAuthTokenService(cookie: any) {
     if (!jwtPayload)
       return res.createErrorObj("unable to vaidate user. Try logging in", "JWT token is tampered");
 
-    const resObj = await findUserByEmail({ email: jwtPayload.email });
+    const resObj = await userService.findUserByEmail({ email: jwtPayload.email });
     if (!resObj.success)
       return res.createErrorObj(
         "unable to vaidate user. Try logging in",

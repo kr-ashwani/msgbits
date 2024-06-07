@@ -1,5 +1,6 @@
+import { Types } from 'mongoose';
 import { IUser } from "../model/user.model";
-
+ 
 declare global {
   namespace Express {
     // Inject additional properties on express.Request
@@ -8,7 +9,7 @@ declare global {
        * if user is not authenticated then authUser will be null.
        * only if user is authenticated then authUser will contain user info
        */
-      authUser: Omit<IUser, "authCode" | "authCodeValidTime" | "comparePassword"> | null;
+      authUser: Omit<IUser &  {_id:Types.ObjectId}, "authCode" | "authCodeValidTime" | "comparePassword"> | null;
     }
   }
 }

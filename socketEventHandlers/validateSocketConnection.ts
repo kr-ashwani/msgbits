@@ -20,6 +20,7 @@ export async function validateSocketConnection(
   socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, SocketAuthData>,
   next: (err?: ExtendedError) => void
 ) {
+  // console.log(socket.conn.request);
   try {
     const authCookie = cookie.parse(socket.handshake.headers.cookie || "");
 

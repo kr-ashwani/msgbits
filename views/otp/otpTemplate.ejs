@@ -3,25 +3,58 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-
-    <%- include('../mail/styles.ejs') %>
+    <title>OTP</title>
   </head>
   <body>
-    <p class="bold">Hi <%= name %>,</p>
-    <br />
-    <p class="bold">Congratulations for registering to Msgbits App.</p>
-    <br />
-    <div class="log">
-      <div class="desc">
-        <p>OTP for Account verification is <span><%= otp %></span></p>
-      </div>
-      <div class="desc">
-        <p>OTP is valid only for 5 minutes.</p>
+    <div
+      style="
+        font-family: Helvetica, Arial, sans-serif;
+        min-width: 1500px;
+        overflow: auto;
+        line-height: 2;
+      "
+    >
+      <div style="margin: 20px auto 50px; width: 95%; padding: 20px 0">
+        <div style="border-bottom: 1px solid #eee">
+          <a
+            href=""
+            style="font-size: 1.4em; color: #00466a; text-decoration: none; font-weight: 600"
+            >Msgbits</a
+          >
+        </div>
+        <p style="font-size: 1.1em">Hi <%= name %>,</p>
+        <p>
+          Thank you for choosing Msgbits. Use the following OTP to complete your Sign Up procedures.
+          OTP is valid for 5 minutes
+        </p>
+        <h2
+          style="
+            background: #00466a;
+            margin: 8px auto;
+            width: max-content;
+            padding: 0 10px;
+            color: #fff;
+            border-radius: 4px;
+          "
+        >
+          <%= otp %>
+        </h2>
+        <p style="font-size: 0.9em">Thanks & Regards,<br />Msgbits Team</p>
+        <hr style="border: none; border-top: 1px solid #eee" />
+        <div
+          style="
+            float: right;
+            padding: 8px 0;
+            color: #aaa;
+            font-size: 0.8em;
+            line-height: 1;
+            font-weight: 300;
+          "
+        >
+          <p>Msgbits</p>
+          <p>India</p>
+        </div>
       </div>
     </div>
-    <br />
-    <p class="bold">Thanks & Regards,</p>
-    <p class="bold">Msgbits Team</p>
   </body>
 </html>

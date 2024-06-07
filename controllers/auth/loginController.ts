@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
-import { findAndValidateUser } from "../../service/user/userService";
+
 import { ClientResponse } from "../../utilityClasses/clientResponse";
+import { userService } from "../../service/user/userService";
 
 async function loginController(req: Request, res: Response) {
-  const resObj = await findAndValidateUser(req.body);
+  const resObj = await userService.findAndValidateUser(req.body);
   const clientRes = new ClientResponse();
   if (resObj.success) {
     clientRes.sendJWTToken(res, resObj.data);

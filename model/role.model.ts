@@ -22,13 +22,3 @@ const roleSchema = new Schema<IRole>(
 
 const RoleModel = model<IRole>("Role", roleSchema);
 export default RoleModel;
-
-async function demo() {
-  const a = await UserModel.find();
-  console.log(a[0]);
-  RoleModel.create({ type: "admin", userId: a[0]._id.toString() });
-}
-console.log("jo");
-setTimeout(() => {
-  demo();
-}, 5000);

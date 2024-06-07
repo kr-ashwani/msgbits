@@ -17,7 +17,10 @@ import cluster from "cluster";
 import { Server } from "socket.io";
 import { createAdapter } from "@socket.io/redis-streams-adapter";
 import RedisConnection from "./redis/redisConnection";
-import registerSocketHandlers from "./socketEventHandlers/registerSocketHandlers";
+import {
+  registerSocketHandlers,
+  registerAdminSocketHandlers,
+} from "./socketEventHandlers/registerSocketHandlers";
 import { instrument } from "@socket.io/admin-ui";
 import os from "os";
 import { setupMaster, setupWorker } from "@socket.io/sticky";
@@ -27,10 +30,14 @@ import {
 } from "./socketEventHandlers/validateSocketConnection";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import "./model/role.model";
+import asyncWrapper from "./middleware/asyncWrapper";
+import AdminProtectedRoutes from "./middleware/AdminProtectedRoutes";
+import validateUserAndRefreshToken from "./middleware/validateUserAndRefreshToken";
 
 class App {
   private readonly app;
   private readonly server;
+  private readonly io;
   static readonly PORT = config.get<number>("PORT");
 
   private static readonly redisConfig = {
@@ -45,34 +52,50 @@ class App {
   constructor() {
     this.app = express();
     this.server = http.createServer(this.app);
+    //socket io server with Redis Adapter
+    const redisClient = new RedisConnection(App.redisConfig, `Redis Adapter`).getConnection();
+    this.io = new Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, SocketAuthData>(
+      this.server,
+      {
+        adapter: createAdapter(redisClient),
+        cors: {
+          credentials: true,
+        },
+      }
+    );
     //initialize Express App like redis adapter, middlewares, routes and error handler
     this.init();
   }
   private init() {
-    this.initializeRedisAdapter();
     this.initializeMiddlewares();
     this.initializeRoutes();
+    this.initializeSocketHandlers();
 
     //initialize error handler at End
     this.initializeErrorHandlerMidleware();
   }
   //Socket io Redis Adapter
-  private initializeRedisAdapter() {
-    const redisClient = new RedisConnection(App.redisConfig, `Redis Adapter`).getConnection();
-
-    const io = new Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, SocketAuthData>({
-      adapter: createAdapter(redisClient),
-      cors: {
-        credentials: true,
-      },
+  private initializeSocketHandlers() {
+    // validate socket with default namepace /
+    this.io.use(validateSocketConnection);
+    // All business logic will be attached to default namepace /
+    this.io.on("connection", (socket) => {
+      registerSocketHandlers(socket, this.io);
     });
-    io.listen(this.server);
-    io.use(validateSocketConnection);
-    io.on("connection", (socket) => {
-      registerSocketHandlers(socket, io);
-    });
-    // Socket io Admin UI
-    instrument(io, {
+    //for socket io sticky session (HTTP long polling fallback)
+    setupWorker(this.io);
+    //socket io ui for admin only
+    this.initializeSocketIOadminUI();
+  }
+  private initializeSocketIOadminUI() {
+    // admin namespace /admin
+    const adminNamespace = this.io.of("/admin");
+    // validate admin namespace first
+    adminNamespace.use(validateSocketConnection);
+    adminNamespace.on("connection", (socket) =>
+      registerAdminSocketHandlers(socket, adminNamespace)
+    );
+    instrument(this.io, {
       serverId: `${os.hostname()}#${process.pid}`,
       auth: {
         type: "basic",
@@ -80,11 +103,12 @@ class App {
         password: App.socketUIConfig.password,
       },
     });
-    setupWorker(io);
-    this.initializeSocketIOadminUI();
-  }
-  private initializeSocketIOadminUI() {
-    this.app.use("/admin/socketui", express.static(path.join(__dirname, "./views/socketio/dist")));
+    //admin protected routes
+    this.app.use(
+      "/admin/socketui",
+      asyncWrapper(AdminProtectedRoutes),
+      express.static(path.join(__dirname, "./views/socketio/dist"))
+    );
   }
   //All middlewares except Error Handler middleware
   private initializeMiddlewares() {
@@ -92,6 +116,9 @@ class App {
     this.app.use(express.json());
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(morganMiddleware);
+    // auth middleware populates authUser in Request
+    // authuser may be null or IUser depending upon response
+    this.app.use(validateUserAndRefreshToken);
   }
   //Routes of the app
   private initializeRoutes() {
@@ -119,7 +146,6 @@ class App {
 
   // public method to start Express App
   public run() {
-    //this.server.listen(this.PORT, this.appHandler.bind(this));
     this.appHandler();
   }
   // used by master process to start App on given port and initialize SocketIO stickySession

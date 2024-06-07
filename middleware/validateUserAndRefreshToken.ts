@@ -15,7 +15,6 @@ async function validateUserAndRefreshToken(req: Request, res: Response, next: Ne
         "authCodeValidTime",
         "comparePassword"
       );
-      req.authUser;
       //generate new token
       if (timeDiff <= 2 * 24 * 60 * 60 * 1000)
         new ClientResponse().sendJWTToken(res, response.data.jwtPayload);
