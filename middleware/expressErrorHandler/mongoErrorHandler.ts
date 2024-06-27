@@ -18,7 +18,7 @@ const mongoErrorHandler = (err: Error, req: Request, res: Response, next: NextFu
       message = "database document not found";
     else message = "database error";
 
-    clientRes.send(res, "Bad Request", clientRes.createErrorObj(message, err.message));
+    clientRes.send(res, "Bad Request", clientRes.createErrorObj("Database Error", err.message));
     return;
   }
   next(err);

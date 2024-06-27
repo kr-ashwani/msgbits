@@ -38,7 +38,7 @@ export async function validateSocketConnection(
     }
 
     throw new BaseError(
-      `Unable to establish socket connection for socketid - ${socket.id} because ${response.error}`,
+      `Unable to establish socket connection for socketid - ${socket.id} because ${response.message}`,
       "Authorization failed Error"
     );
   } catch (err: any) {

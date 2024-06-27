@@ -1,6 +1,7 @@
 import config from "config";
 import { Response } from "express";
 import { jwtService, userJWTPayload } from "../../service/jwt/JwtService";
+import { ErrorCode } from "./types";
 
 //Client will receive ClientResponseSuccess schema on successfull response
 interface ClientResponseSuccess<T> {
@@ -9,10 +10,10 @@ interface ClientResponseSuccess<T> {
   data: T;
 }
 //Client will receive ClientResponseError schema on response failure
-interface ClientResponseError<T> {
+interface ClientResponseError {
   success: false;
+  errCode: ErrorCode;
   message: string;
-  error: T;
 }
 //HTTP status to code mapping
 const HTTPStatusToCode = {
@@ -61,11 +62,11 @@ class ClientResponse {
       data,
     };
   }
-  createErrorObj<T>(message: string, error: T): ClientResponseError<T> {
+  createErrorObj(errCode: ErrorCode, message: string): ClientResponseError {
     return {
       ...this.fail_res,
+      errCode,
       message,
-      error,
     };
   }
   /**
@@ -75,12 +76,12 @@ class ClientResponse {
    * @param message Message to client refarding the response
    * @param dataOrErr sending data or error
    */
-  send<T, U>(
+  send<T>(
     res: Response,
     status: keyof typeof HTTPStatusToCode,
-    responseObj: ClientResponseSuccess<T> | ClientResponseError<U>
+    responseObj: ClientResponseSuccess<T> | ClientResponseError
   ) {
-    let resObj: ClientResponseSuccess<T> | ClientResponseError<U>;
+    let resObj: ClientResponseSuccess<T> | ClientResponseError;
     const httpCode = HTTPStatusToCode[status];
     if (responseObj.success && httpCode >= 200 && httpCode < 300)
       resObj = {
@@ -91,10 +92,8 @@ class ClientResponse {
     else
       resObj = {
         success: false,
+        errCode: "Internal Server Error",
         message: responseObj.message,
-        // if response object is success but httpCode doesnot support it
-        // so, it will be finally marked as error
-        error: responseObj.success ? (responseObj.data as any) : responseObj.error,
       };
 
     res.status(httpCode).json(resObj);

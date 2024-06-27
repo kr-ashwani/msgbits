@@ -43,7 +43,7 @@ class UserService {
 
       if (!res.data.originalUser.isVerified)
         return newRes.createErrorObj(
-          `User with email ${input.email} is not verified`,
+          "Authentication Error",
           `User with email ${input.email} is not verified. Try signing up`
         );
 
@@ -51,7 +51,7 @@ class UserService {
       //we are sure user will have atleast 1 element
 
       if (isValidUser) return newRes.createSuccessObj(res.message, res.data.trimmedUser);
-      else return newRes.createErrorObj("password did not match", "password did not match");
+      else return newRes.createErrorObj("Authentication Error", "password did not match");
     } catch (e: any) {
       throw new Error(e);
     }
@@ -73,7 +73,7 @@ class UserService {
 
       if (user.length !== 1)
         return response.createErrorObj(
-          `User with email ${input.email} is not registered. Try signing up`,
+          "Authentication Error",
           `User with email ${input.email} is not registered. Try signing up`
         );
 

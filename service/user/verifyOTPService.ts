@@ -54,7 +54,7 @@ export async function verifyOTPService(input: OTPSchema) {
     else if (user[0].authCode !== Number(input.otp)) failureMsg = "OTP did not match";
     else if (user[0].authCodeValidTime <= Date.now()) failureMsg = "OTP has expired";
 
-    return response.createErrorObj(failureMsg, failureMsg);
+    return response.createErrorObj("Authentication Error", failureMsg);
   } catch (e: any) {
     throw new Error(e);
   }

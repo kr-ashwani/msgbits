@@ -21,10 +21,7 @@ class RoleService {
       const response = new ClientResponse();
 
       if (role.length !== 1)
-        return response.createErrorObj(
-          `User has not associated role`,
-          `User has not associated role`
-        );
+        return response.createErrorObj("Insufficient Role Error", `User has not associated role`);
 
       return response.createSuccessObj("Role found", {
         userRole: omit(role[0].toJSON(), "_id", "__v"),

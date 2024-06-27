@@ -1,0 +1,6 @@
+export type ErrorCode =
+  | "Database Error"
+  | "Validation Error"
+  | "Internal Server Error"
+  | "Insufficient Role Error"
+  | "Authentication Error";
