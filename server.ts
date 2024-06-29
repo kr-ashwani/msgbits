@@ -23,7 +23,6 @@ import {
 } from "./socketEventHandlers/registerSocketHandlers";
 import { instrument } from "@socket.io/admin-ui";
 import os from "os";
-import { setupMaster, setupWorker } from "@socket.io/sticky";
 import {
   SocketAuthData,
   validateSocketConnection,
@@ -89,8 +88,6 @@ class App {
     this.io.on("connection", (socket) => {
       registerSocketHandlers(socket, this.io);
     });
-    //for socket io sticky session (HTTP long polling fallback)
-    setupWorker(this.io);
     //socket io ui for admin only
     this.initializeSocketIOadminUI();
   }
@@ -133,12 +130,7 @@ class App {
   // app handler will be called by public function run when express
   // app will bind port number
   private appHandler() {
-    if (cluster.isPrimary)
-      logger.info(`Server with pid ${process.pid} is running at http://localhost:${App.PORT}`);
-    else
-      logger.info(
-        `Server Worker process with pid ${process.pid} is running at http://localhost:${App.PORT}`
-      );
+    logger.info(`Server is running at http://localhost:${App.PORT}`);
     dbConnection();
     RedisPubSub.getInstance();
 
@@ -147,16 +139,7 @@ class App {
 
   // public method to start Express App
   public run() {
-    this.appHandler();
-  }
-  // used by master process to start App on given port and initialize SocketIO stickySession
-  static startServerAndinitializeSocketIOstickySession() {
-    const httpServer = http.createServer();
-    //socket io sticky session master setup
-    setupMaster(httpServer, {
-      loadBalancingMethod: "least-connection", // either "random", "round-robin" or "least-connection"
-    });
-    httpServer.listen(App.PORT);
+    this.app.listen(App.PORT, () => this.appHandler());
   }
 }
 
