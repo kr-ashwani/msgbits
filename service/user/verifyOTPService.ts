@@ -24,6 +24,7 @@ export async function verifyOTPService(input: OTPSchema) {
       },
       {
         isVerified: true,
+        authCodeValidTime: 0,
       },
       new UserRowMapper((data) => {
         user.push(data);
@@ -37,7 +38,7 @@ export async function verifyOTPService(input: OTPSchema) {
         user[0]
       );
 
-    // if user update is unsuccessful, then find used by input email and check what wrong happened
+    // if user update is unsuccessful, then find used by input email and check what went wrong
     await userDAO.find(
       {
         email: input.email,
