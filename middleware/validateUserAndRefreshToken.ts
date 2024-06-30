@@ -8,7 +8,7 @@ async function validateUserAndRefreshToken(req: Request, res: Response, next: Ne
     const timeDiff = (response.data.jwtPayload.exp || 0) * 1000 - Date.now();
     if (timeDiff >= 0) {
       //set authUser
-      req.authUser = response.data.originalUser;
+      req.authUser = response.data.user;
 
       //generate new token
       if (timeDiff <= 2 * 24 * 60 * 60 * 1000)

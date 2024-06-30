@@ -28,11 +28,11 @@ export async function validateSocketConnection(
     if (response.success) {
       // set auth detail to socket
       socket.data.auth = {
-        id: response.data.originalUser._id.toString(),
-        name: response.data.originalUser.name,
-        email: response.data.originalUser.email,
-        isVerified: response.data.originalUser.isVerified,
-        createdAt: response.data.originalUser.createdAt,
+        id: response.data.user._id.toString(),
+        name: response.data.user.name,
+        email: response.data.user.email,
+        isVerified: response.data.user.isVerified,
+        createdAt: response.data.user.createdAt,
       };
       return next();
     }

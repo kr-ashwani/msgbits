@@ -8,6 +8,10 @@ import loginController from "../../controllers/auth/loginController";
 import logoutController from "../../controllers/auth/logoutController";
 import { validateUserSchema } from "../../schema/user/validateUserSchema";
 import authTokenVerifyController from "../../controllers/auth/authTokenVerifyController";
+import { forgotPasswordSchema } from "../../schema/user/forgotPasswordSchema";
+import { resetPasswordSchema } from "../../schema/user/resetPasswordSchema";
+import { forgotPasswordController } from "../../controllers/auth/forgotPasswordController";
+import { resetPasswordController } from "../../controllers/auth/resetPasswordController";
 
 const express = require("express");
 
@@ -26,6 +30,14 @@ authRouter
 authRouter
   .route("/login")
   .post(validateResource(validateUserSchema), asyncWrapper(loginController));
+
+authRouter
+  .route("/forgotpassword")
+  .post(validateResource(forgotPasswordSchema), asyncWrapper(forgotPasswordController));
+
+authRouter
+  .route("/resetpassword")
+  .post(validateResource(resetPasswordSchema), asyncWrapper(resetPasswordController));
 
 authRouter.route("/logout").get(asyncWrapper(logoutController));
 

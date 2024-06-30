@@ -4,7 +4,7 @@ import { ClientResponse } from "../../utilityClasses/clientResponse";
 
 async function authTokenVerifyController(req: Request, res: Response) {
   const clientRes = new ClientResponse();
-  if (req.authUser) {
+  if (req.authUser)
     clientRes.send(
       res,
       "OK",
@@ -13,7 +13,7 @@ async function authTokenVerifyController(req: Request, res: Response) {
         resSchemaForModel.getUser(req.authUser)
       )
     );
-  } else
+  else
     clientRes.send(
       res,
       "Bad Request",

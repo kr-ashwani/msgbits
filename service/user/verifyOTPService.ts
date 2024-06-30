@@ -20,6 +20,7 @@ export async function verifyOTPService(input: OTPSchema) {
         isVerified: false,
         authCode: input.otp,
         authCodeValidTime: { $gte: Date.now() },
+        authCodeType: "VerifyAccount",
       },
       {
         isVerified: true,
@@ -31,11 +32,10 @@ export async function verifyOTPService(input: OTPSchema) {
     const response = new ClientResponse();
     // if previous update is successful then update query will return that user
     if (user.length === 1)
-      return response.createSuccessObj(`user with email ${user[0].email} is now verified.`, {
-        email: user[0].email,
-        name: user[0].name,
-        createdAt: user[0].createdAt,
-      });
+      return response.createSuccessObj(
+        `user with email ${user[0].email} is now verified.`,
+        user[0]
+      );
 
     // if user update is unsuccessful, then find used by input email and check what wrong happened
     await userDAO.find(
@@ -47,7 +47,7 @@ export async function verifyOTPService(input: OTPSchema) {
       })
     );
 
-    let failureMsg = "";
+    let failureMsg = "Something Went Wrong";
     if (user.length !== 1) failureMsg = "User is not registered";
     else if (user[0].isVerified)
       failureMsg = `User with email ${user[0].email} is already registered. Try logging in`;

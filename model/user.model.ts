@@ -1,6 +1,8 @@
 import { Schema, model, Document, InferSchemaType, HydratedDocument, Model } from "mongoose";
 import bcrypt from "bcrypt";
+import { ArrayElement } from "../types";
 
+const authCodeType: ["VerifyAccount", "ResetPassword"] = ["VerifyAccount", "ResetPassword"];
 export type IUser = {
   email: string;
   name: string;
@@ -10,6 +12,7 @@ export type IUser = {
   isVerified: boolean;
   authCode: number;
   authCodeValidTime: number;
+  authCodeType: ArrayElement<typeof authCodeType>;
   comparePassword: (candidatePassword: string) => Promise<boolean>;
 };
 // User Schema
@@ -37,6 +40,11 @@ const userSchema = new Schema<IUser>(
       required: [true, "Auth code is required"],
       min: 100000,
       max: 999999,
+    },
+    authCodeType: {
+      type: String,
+      required: [true, "Auth type is required"],
+      enum: authCodeType,
     },
     authCodeValidTime: {
       type: Number,

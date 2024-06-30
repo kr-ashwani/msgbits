@@ -1,17 +1,22 @@
 import type Mail from "../utilityClasses/mail/Mail";
-
-type ViewType = "ERROR_MAIL" | "OTP_MAIL";
-interface errorTemplateMail {
+interface errorTemplate {
+  type: "ERROR_MAIL";
   mail: Mail;
   err: Error;
   stack: string;
 }
-
-interface otpTemplateOTP {
+interface otpTemplate {
+  type: "OTP_MAIL";
   name: string;
   otp: number;
 }
 
-type renderEJSopts = errorTemplateMail | otpTemplateOTP;
+interface passwordResetTemplate {
+  type: "PASSWORD_RESET_MAIL";
+  name: string;
+  passwordResetLink: string;
+}
 
+type renderEJSopts = errorTemplate | otpTemplate | passwordResetTemplate;
+type ViewType = Pick<renderEJSopts, "type">["type"];
 export { renderEJSopts, ViewType };

@@ -18,7 +18,7 @@ export async function validateAuthTokenService(cookie: any) {
         `User with email ${jwtPayload.email} is not registered. Try signing up`
       );
     else {
-      if (!resObj.data.originalUser.isVerified) {
+      if (!resObj.data.user.isVerified) {
         return res.createErrorObj(
           "Authentication Error",
           `User with email ${jwtPayload.email} is not verified. Try signing up`

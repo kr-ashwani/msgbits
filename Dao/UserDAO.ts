@@ -40,7 +40,8 @@ class UserDAO extends DmlDAO<UserInput, IUser> {
         const isVerified = false;
         const authCode = MathUtil.generateRandomNumber(100000, 999999);
         const authCodeValidTime = Date.now() + 5 * 60 * 1000;
-        const user = { ...doc, isVerified, authCode, authCodeValidTime };
+        const authCodeType: "VerifyAccount" = "VerifyAccount";
+        const user = { ...doc, authCodeType, isVerified, authCode, authCodeValidTime };
         userDocs.push(user);
       });
 
