@@ -35,7 +35,7 @@ class RoleDAO extends DmlDAO<IRole, IRole> {
 
       userRoleResultSet.map((row) => rowMapper.mapRow(row));
     } catch (err: any) {
-      throw new Error(err);
+      throw err;
     }
   }
   /**
@@ -56,7 +56,7 @@ class RoleDAO extends DmlDAO<IRole, IRole> {
 
       userResultSet.map((row) => rowMapper.mapRow(row));
     } catch (err: any) {
-      throw new Error(err);
+      throw err;
     }
   }
 
@@ -77,7 +77,7 @@ class RoleDAO extends DmlDAO<IRole, IRole> {
       const userResultSet = await RoleModel.findOneAndUpdate(filter, update, options);
       if (userResultSet) rowMapper.mapRow(userResultSet);
     } catch (err: any) {
-      throw new Error(err);
+      throw err;
     }
   }
 }

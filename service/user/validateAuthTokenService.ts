@@ -30,7 +30,7 @@ export async function validateAuthTokenService(cookie: any) {
       ...resObj.data,
       jwtPayload,
     });
-  } catch (e: any) {
-    throw new Error(e);
+  } catch (err: any) {
+    throw err;
   }
 }

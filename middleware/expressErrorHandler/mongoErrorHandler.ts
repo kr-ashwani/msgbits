@@ -1,8 +1,30 @@
 import { Request, Response, NextFunction } from "express";
 import { ClientResponse } from "../../utilityClasses/clientResponse";
 import mongoose from "mongoose";
+import { MongoError, MongoServerError } from "mongodb";
 
 const mongoErrorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
+  //mongodb error handling
+  if (err instanceof MongoError) {
+    const clientRes = new ClientResponse();
+
+    let message = "";
+    // duplicate keys error handling
+    if (err instanceof MongoServerError && err.code === 11000)
+      Object.entries(err?.keyValue).forEach((elem) => {
+        const strArr = elem[0].split("");
+        strArr[0] = strArr[0].toUpperCase();
+        message += `${strArr.join("")} '${elem[1]}' is already registered. `;
+      });
+
+    if (message)
+      return clientRes.send(
+        res,
+        "Bad Request",
+        clientRes.createErrorObj("Authentication Error", message)
+      );
+  }
+  //mongoose error handling
   if (err instanceof mongoose.MongooseError) {
     const clientRes = new ClientResponse();
 

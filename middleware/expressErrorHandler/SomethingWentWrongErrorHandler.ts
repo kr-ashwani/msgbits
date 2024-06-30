@@ -14,7 +14,7 @@ const SomethingWentWrongErrorHandler = (
     clientRes.send(
       res,
       "Internal Server Error",
-      clientRes.createErrorObj("Internal Server Error", err.message)
+      clientRes.createErrorObj("Internal Server Error", "Something went wrong")
     );
 
   handleError(errToBaseError(err, false));

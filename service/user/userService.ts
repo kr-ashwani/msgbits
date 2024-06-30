@@ -23,8 +23,8 @@ class UserService {
       );
       //we are sure user will have atleast 1 element
       return user[0];
-    } catch (e: any) {
-      throw new Error(e);
+    } catch (err: any) {
+      throw err;
     }
   }
 
@@ -114,8 +114,8 @@ class UserService {
         "Password Reset mail sent",
         `Password reset mail has been successfully sent to ${input.email}. Follow the instructions in the email to reset your password.`
       );
-    } catch (e: any) {
-      throw new Error(e);
+    } catch (err: any) {
+      throw err;
     }
   }
 
@@ -170,8 +170,8 @@ class UserService {
         failureMsg = "Authentication code has expired";
 
       return response.createErrorObj("Authentication Error", failureMsg);
-    } catch (e: any) {
-      throw new Error(e);
+    } catch (err: any) {
+      throw err;
     }
   }
 }

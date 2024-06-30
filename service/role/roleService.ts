@@ -26,8 +26,8 @@ class RoleService {
       return response.createSuccessObj("Role found", {
         userRole: omit(role[0].toJSON(), "_id", "__v"),
       });
-    } catch (e: any) {
-      throw new Error(e);
+    } catch (err: any) {
+      throw err;
     }
   }
 }

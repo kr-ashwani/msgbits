@@ -49,7 +49,7 @@ class UserDAO extends DmlDAO<UserInput, IUser> {
 
       userResultSet.map((row) => rowMapper.mapRow(row));
     } catch (err: any) {
-      throw new Error(err);
+      throw err;
     }
   }
   /**
@@ -70,7 +70,7 @@ class UserDAO extends DmlDAO<UserInput, IUser> {
 
       userResultSet.map((row) => rowMapper.mapRow(row));
     } catch (err: any) {
-      throw new Error(err);
+      throw err;
     }
   }
 
@@ -91,7 +91,7 @@ class UserDAO extends DmlDAO<UserInput, IUser> {
       const userResultSet = await UserModel.findOneAndUpdate(filter, update, options);
       if (userResultSet) rowMapper.mapRow(userResultSet);
     } catch (err: any) {
-      throw new Error(err);
+      throw err;
     }
   }
 }
