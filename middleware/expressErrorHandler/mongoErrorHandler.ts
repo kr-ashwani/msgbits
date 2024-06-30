@@ -29,12 +29,10 @@ const mongoErrorHandler = (err: Error, req: Request, res: Response, next: NextFu
     const clientRes = new ClientResponse();
 
     let message = "";
-    if (
-      err instanceof mongoose.Error.ValidationError ||
-      err instanceof mongoose.Error.ValidatorError
-    )
-      message = "database validation failed";
-    else if (err instanceof mongoose.Error.DocumentNotFoundError)
+    if (err instanceof mongoose.Error.ValidationError) {
+      const errors = Object.values(err.errors).map((el) => el.message);
+      message = `Invalid input data. ${errors.join(". ")}`;
+    } else if (err instanceof mongoose.Error.DocumentNotFoundError)
       message = "database document not found";
     else if (err instanceof mongoose.Error.DocumentNotFoundError)
       message = "database document not found";
