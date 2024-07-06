@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { roleService } from "../service/database/role/roleService";
-import AuthorizationError from "../errors/httperror/AuthorizationError";
 import AuthenticationError from "../errors/httperror/AuthenticationError";
+import InsufficientRoleError from "../errors/httperror/InsufficientRoleError";
 async function AdminProtectedRoutes(req: Request, res: Response, next: NextFunction) {
   try {
     if (req.authUser) {
@@ -9,7 +9,7 @@ async function AdminProtectedRoutes(req: Request, res: Response, next: NextFunct
 
       if (userRole.role === "admin") return next();
       else
-        throw new AuthorizationError(
+        throw new InsufficientRoleError(
           `user with email ${req.authUser.email} donot have Admin Privilege`
         );
     } else throw new AuthenticationError(`Auth token cookie is missing or tampered`);

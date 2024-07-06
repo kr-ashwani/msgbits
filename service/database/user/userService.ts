@@ -51,18 +51,18 @@ class UserService {
           `User with email ${input.email} is not registered. Try signing up`
         );
 
-      if (!user[0].isVerified) {
-        await this.accountVerificationThroughEmail({ email: user[0].email });
-        throw new EmailVerificationError(
-          `User with email ${input.email} is not verified. Please log in and verify your account.`
-        );
-      }
-
       const isValidUser = await user[0].comparePassword(input.password);
       //we are sure user will have atleast 1 element
 
-      if (isValidUser) return resSchemaForModel.getUser(user[0]);
-      else throw new AuthenticationError("password did not match");
+      if (isValidUser) {
+        if (!user[0].isVerified) {
+          await this.accountVerificationThroughEmail({ email: user[0].email });
+          throw new EmailVerificationError(
+            `User with email ${input.email} is not verified. Please log in and verify your account.`
+          );
+        }
+        return resSchemaForModel.getUser(user[0]);
+      } else throw new AuthenticationError("password did not match");
     } catch (err) {
       throw err;
     }

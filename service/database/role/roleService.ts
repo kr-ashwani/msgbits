@@ -19,7 +19,9 @@ class RoleService {
       );
 
       if (role.length !== 1)
-        throw new InsufficientRoleError(`User does not required role to access the resource.`);
+        throw new InsufficientRoleError(
+          "The user lacks the necessary role to access this resource."
+        );
 
       return resSchemaForModel.getRole(role[0]);
     } catch (err) {
