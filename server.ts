@@ -50,11 +50,13 @@ class App {
     this.server = http.createServer(this.app);
     //socket io server with Redis Adapter
     const redisClient = new RedisConnection(App.redisConfig, `Redis Adapter`).getConnection();
+    const clientURL = config.get<string>("CLIENT_URL");
     this.io = new Server<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, SocketAuthData>(
       this.server,
       {
         adapter: createAdapter(redisClient),
         cors: {
+          origin: ["http://localhost:3000", clientURL],
           credentials: true,
         },
       }
@@ -72,9 +74,10 @@ class App {
     this.initializeErrorHandlerMidleware();
   }
   private initializeCORS() {
+    const clientURL = config.get<string>("CLIENT_URL");
     this.app.use(
       cors({
-        origin: ["http://192.168.29.251:3000", "http://localhost:3000"],
+        origin: ["http://localhost:3000", clientURL],
         credentials: true,
       })
     );
