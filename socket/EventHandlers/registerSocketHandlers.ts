@@ -6,8 +6,11 @@ import { SocketManager } from "../SocketIOManager/SocketManager";
 function registerSocketHandlers(socketService: SocketService) {
   logSocketConnection(socketService.getSocket(), "User");
 
-  const { chatRoomService, chatUserService, messageService, fileService } =
+  const { chatRoomService, chatUserService, messageService, fileService, syncService } =
     socketService.getChatServices();
+
+  //sync services
+  syncService.init();
 }
 // Entry point for Namespace /admin socket io handlers
 function registerAdminSocketHandlers(socketService: SocketService) {

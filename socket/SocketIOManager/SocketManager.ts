@@ -23,10 +23,16 @@ export class SocketManager {
     event: K,
     callback: (payload: Zod.infer<ListenerSchema[K]>) => void
   ) {
-    const eventHandler = (payload: any) => {
+    const eventHandler = (payload: any, ack: any) => {
       const result = ListenerSchema[event].safeParse(payload);
-      if (result.success) callback(result.data);
-      else logger.error(`ValidationError: server did not correctly send ${event} event data`);
+      if (result.success) {
+        callback(result.data);
+        ack();
+      } else {
+        const error = `ValidationError: client did not correctly send ${event} event data`;
+        ack({ success: false, error });
+        logger.error(error);
+      }
     };
     this.socket.on(event as string, eventHandler);
     return { event, eventHandler };

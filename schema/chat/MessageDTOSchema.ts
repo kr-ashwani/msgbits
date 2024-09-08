@@ -14,7 +14,7 @@ const MessageDTOBaseSchema = z.object({
   senderId: z.string({
     required_error: "SenderId is required",
   }),
-  status: z.enum(["pending", "sent", "delivered", "read", "failed"], {
+  status: z.literal("sent", {
     required_error: "Status is required",
   }),
   repliedTo: z.union([z.string(), z.null()]),
@@ -24,10 +24,30 @@ const MessageDTOBaseSchema = z.object({
   updatedAt: z.string({
     required_error: "updatedAt is required",
   }),
+  deliveredTo: z.array(
+    z.string({
+      required_error: "Members is required",
+    }),
+    {
+      required_error: "Members is required",
+    }
+  ),
+  seenBy: z.array(
+    z.string({
+      required_error: "Members is required",
+    }),
+    {
+      required_error: "Members is required",
+    }
+  ),
 });
 
 const TextMessageDTOSchema = MessageDTOBaseSchema.extend({
   type: z.literal("text"),
+});
+
+const TimestampMessageSchema = MessageDTOBaseSchema.extend({
+  type: z.literal("timestamp"),
 });
 
 const FileMessageDTOSchema = MessageDTOBaseSchema.extend({
@@ -37,10 +57,12 @@ const FileMessageDTOSchema = MessageDTOBaseSchema.extend({
 
 export const MessageDTOSchema = z.discriminatedUnion("type", [
   TextMessageDTOSchema,
+  TimestampMessageSchema,
   FileMessageDTOSchema,
 ]);
 
 export type MessageBaseDTO = z.infer<typeof MessageDTOBaseSchema>;
 export type TextMessageDTO = z.infer<typeof TextMessageDTOSchema>;
+export type TimestampMessageDTO = z.infer<typeof TimestampMessageSchema>;
 export type FileMessageDTO = z.infer<typeof FileMessageDTOSchema>;
 export type MessageDTO = z.infer<typeof MessageDTOSchema>;

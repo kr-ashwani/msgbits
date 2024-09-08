@@ -21,12 +21,16 @@ export const FileDTOSchema = z.object({
   }),
   dimension: z.object(
     {
-      width: z.number({
-        required_error: "Width is required",
-      }),
-      height: z.number({
-        required_error: "Height is required",
-      }),
+      width: z
+        .number({
+          required_error: "Width is required",
+        })
+        .nullable(),
+      height: z
+        .number({
+          required_error: "Height is required",
+        })
+        .nullable(),
     },
     { required_error: "File Dimension is required" }
   ),

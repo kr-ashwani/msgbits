@@ -22,14 +22,14 @@ abstract class DmlDAO<T, V> {
    *
    * @param filter
    * @param rowMapper
-   * @param projection
    * @param options
+   * @param projection
    */
   abstract find(
     filter: Partial<T>,
     rowMapper: RowMapper<HydratedDocument<T>>,
-    projection?: ProjectionType<T> | null | undefined,
-    options?: QueryOptions<T> | null | undefined
+    options?: QueryOptions<T> | null | undefined,
+    projection?: ProjectionType<T> | null | undefined
   ): Promise<void>;
 
   /**

@@ -6,10 +6,12 @@ interface IMessageBase {
   messageId: string;
   message: string;
   senderId: string;
-  status: "sent" | "delivered" | "read";
+  status: "sent";
   repliedTo: string | null;
   createdAt: Date;
   updatedAt: Date;
+  deliveredTo: string[];
+  seenBy: string[];
 }
 
 // Interface for text messages
@@ -25,7 +27,7 @@ interface ITimestampMessage extends IMessageBase {
 // Interface for file messages
 interface IFileMessage extends IMessageBase {
   type: "file";
-  fileId: string | null;
+  fileId: string;
 }
 
 // Messsage interface
@@ -57,8 +59,8 @@ const messageSchema = new Schema<IMessage>(
     },
     status: {
       type: String,
-      enum: ["sent", "delivered", "read"],
-      required: [true, "Message status is required"],
+      required: false,
+      default: "sent",
     },
     repliedTo: {
       type: String,
@@ -77,7 +79,6 @@ const messageSchema = new Schema<IMessage>(
         },
         "File ID is required for file messages",
       ],
-      default: null,
     },
   },
   {

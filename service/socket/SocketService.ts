@@ -7,6 +7,7 @@ import { SocketChatRoomService } from "./SocketChatRoomService";
 import { SocketChatUserService } from "./SocketChatUserService";
 import { SocketFileService } from "./SocketFileService";
 import { SocketMessageService } from "./SocketMessageService";
+import { SocketSyncService } from "./SocketSyncService";
 
 export class SocketService {
   private socket: SocketManager;
@@ -15,6 +16,7 @@ export class SocketService {
   private socketChatRoomService;
   private socketFileService;
   private socketChatUserService;
+  private socketSyncService;
 
   constructor(
     socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, SocketAuthData>,
@@ -26,6 +28,7 @@ export class SocketService {
     this.socketMessageService = new SocketMessageService(this.socket, this.io);
     this.socketFileService = new SocketFileService(this.socket, this.io);
     this.socketChatUserService = new SocketChatUserService(this.socket, this.io);
+    this.socketSyncService = new SocketSyncService(this.socket, this.io);
   }
 
   getSocket() {
@@ -40,6 +43,7 @@ export class SocketService {
       chatUserService: this.socketChatUserService,
       fileService: this.socketFileService,
       messageService: this.socketMessageService,
+      syncService: this.socketSyncService,
     };
   }
 }

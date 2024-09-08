@@ -1,14 +1,14 @@
 import { chatRoom } from "./../test/chatRoomData";
-import { Schema, model } from "mongoose";
+import { Schema, Types, model } from "mongoose";
 
 // Base interface for chat rooms
 interface IChatRoomBase {
   chatRoomId: string;
   members: string[];
   lastMessageId: string;
-  createdBy: Date;
-  updatedBy: Date;
-  type: "private" | "group";
+  createdBy: Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Interface for private chat rooms
@@ -39,6 +39,11 @@ const chatRoomSchema = new Schema<IChatRoom>(
       type: String,
       required: [true, "Chat room ID is required"],
       unique: true,
+    },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      required: [true, "Created by is required"],
+      ref: "User", // Assuming you're referencing the User model
     },
     members: {
       type: [String],

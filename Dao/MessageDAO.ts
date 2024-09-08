@@ -17,6 +17,12 @@ type FilterQuery<T> = {
 } & RootQuerySelector<T>;
 
 class MessageDAO extends DmlDAO<IMessage, IMessage> {
+  /**
+   *
+   * @param docs
+   * @param rowMapper
+   * @param options
+   */
   async create(
     docs: IMessage[],
     rowMapper: RowMapper<HydratedDocument<IMessage>>,
@@ -38,11 +44,18 @@ class MessageDAO extends DmlDAO<IMessage, IMessage> {
     }
   }
 
+  /**
+   *
+   * @param filter
+   * @param rowMapper
+   * @param options
+   * @param projection
+   */
   async find(
     filter: FilterQuery<IMessage>,
     rowMapper: RowMapper<HydratedDocument<IMessage>>,
-    projection?: ProjectionType<IMessage> | null | undefined,
-    options?: QueryOptions<IMessage> | null | undefined
+    options?: QueryOptions<IMessage> | null | undefined,
+    projection?: ProjectionType<IMessage> | null | undefined
   ) {
     try {
       const messageResultSet = await MessageModel.find(filter, projection, options);
@@ -53,6 +66,13 @@ class MessageDAO extends DmlDAO<IMessage, IMessage> {
     }
   }
 
+  /**
+   *
+   * @param filter
+   * @param update
+   * @param rowMapper
+   * @param options
+   */
   async update(
     filter: FilterQuery<IMessage>,
     update: UpdateQuery<IMessage>,

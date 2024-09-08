@@ -64,8 +64,8 @@ class UserDAO extends DmlDAO<OAuthUserInput, IUser> {
   async find(
     filter: FilterQuery<IUser>,
     rowMapper: RowMapper<HydratedDocument<IUser>>,
-    projection?: ProjectionType<IUser> | null | undefined,
-    options?: QueryOptions<IUser> | null | undefined
+    options?: QueryOptions<IUser> | null | undefined,
+    projection?: ProjectionType<IUser> | null | undefined
   ) {
     try {
       const userResultSet = await UserModel.find(filter, projection, options);

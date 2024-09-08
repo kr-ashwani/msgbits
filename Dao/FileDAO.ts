@@ -18,6 +18,12 @@ type FilterQuery<T> = {
 } & RootQuerySelector<T>;
 
 class FileDAO extends DmlDAO<IFile, IFile> {
+  /**
+   *
+   * @param docs
+   * @param rowMapper
+   * @param options
+   */
   async create(
     docs: IFile[],
     rowMapper: RowMapper<HydratedDocument<IFile>>,
@@ -39,11 +45,18 @@ class FileDAO extends DmlDAO<IFile, IFile> {
     }
   }
 
+  /**
+   *
+   * @param filter
+   * @param rowMapper
+   * @param options
+   * @param projection
+   */
   async find(
     filter: FilterQuery<IFile>,
     rowMapper: RowMapper<HydratedDocument<IFile>>,
-    projection?: ProjectionType<IFile> | null | undefined,
-    options?: QueryOptions<IFile> | null | undefined
+    options?: QueryOptions<IFile> | null | undefined,
+    projection?: ProjectionType<IFile> | null | undefined
   ) {
     try {
       const fileResultSet = await FileModel.find(filter, projection, options);
@@ -54,6 +67,13 @@ class FileDAO extends DmlDAO<IFile, IFile> {
     }
   }
 
+  /**
+   *
+   * @param filter
+   * @param update
+   * @param rowMapper
+   * @param options
+   */
   async update(
     filter: FilterQuery<IFile>,
     update: UpdateQuery<IFile>,

@@ -17,6 +17,12 @@ type FilterQuery<T> = {
 } & RootQuerySelector<T>;
 
 class ChatRoomDAO extends DmlDAO<IChatRoom, IChatRoom> {
+  /**
+   *
+   * @param docs
+   * @param rowMapper
+   * @param options
+   */
   async create(
     docs: IChatRoom[],
     rowMapper: RowMapper<HydratedDocument<IChatRoom>>,
@@ -38,11 +44,18 @@ class ChatRoomDAO extends DmlDAO<IChatRoom, IChatRoom> {
     }
   }
 
+  /**
+   *
+   * @param filter
+   * @param rowMapper
+   * @param options
+   * @param projection
+   */
   async find(
     filter: FilterQuery<IChatRoom>,
     rowMapper: RowMapper<HydratedDocument<IChatRoom>>,
-    projection?: ProjectionType<IChatRoom> | null | undefined,
-    options?: QueryOptions<IChatRoom> | null | undefined
+    options?: QueryOptions<IChatRoom> | null | undefined,
+    projection?: ProjectionType<IChatRoom> | null | undefined
   ) {
     try {
       const chatRoomResultSet = await ChatRoomModel.find(filter, projection, options);
@@ -53,6 +66,13 @@ class ChatRoomDAO extends DmlDAO<IChatRoom, IChatRoom> {
     }
   }
 
+  /**
+   *
+   * @param filter
+   * @param update
+   * @param rowMapper
+   * @param options
+   */
   async update(
     filter: FilterQuery<IChatRoom>,
     update: UpdateQuery<IChatRoom>,

@@ -48,8 +48,8 @@ class RoleDAO extends DmlDAO<IRole, IRole> {
   async find(
     filter: FilterQuery<IRole>,
     rowMapper: RowMapper<HydratedDocument<IRole>>,
-    projection?: ProjectionType<IRole> | null | undefined,
-    options?: QueryOptions<IRole> | null | undefined
+    options?: QueryOptions<IRole> | null | undefined,
+    projection?: ProjectionType<IRole> | null | undefined
   ) {
     try {
       const userResultSet = await RoleModel.find(filter, projection, options);
