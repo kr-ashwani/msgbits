@@ -24,7 +24,7 @@ class ChatRoomDAO extends DmlDAO<IChatRoom, IChatRoom> {
    * @param options
    */
   async create(
-    docs: IChatRoom[],
+    docs: IChatRoom | IChatRoom[],
     rowMapper: RowMapper<HydratedDocument<IChatRoom>>,
     options?: CreateOptions
   ) {

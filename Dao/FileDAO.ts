@@ -25,7 +25,7 @@ class FileDAO extends DmlDAO<IFile, IFile> {
    * @param options
    */
   async create(
-    docs: IFile[],
+    docs: IFile | IFile[],
     rowMapper: RowMapper<HydratedDocument<IFile>>,
     options?: CreateOptions
   ) {

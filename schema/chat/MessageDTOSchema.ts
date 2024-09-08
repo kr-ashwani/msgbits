@@ -14,7 +14,7 @@ const MessageDTOBaseSchema = z.object({
   senderId: z.string({
     required_error: "SenderId is required",
   }),
-  status: z.literal("sent", {
+  status: z.enum(["pending", "sent"], {
     required_error: "Status is required",
   }),
   repliedTo: z.union([z.string(), z.null()]),

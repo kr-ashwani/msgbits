@@ -29,6 +29,7 @@ export class SocketManager {
         callback(result.data);
         ack();
       } else {
+        console.log(result.error);
         const error = `ValidationError: client did not correctly send ${event} event data`;
         ack({ success: false, error });
         logger.error(error);
@@ -64,6 +65,10 @@ export class SocketManager {
     }
   }
 
+  public onDisconnect(callback: () => void): void {
+    this.socket.on("disconnect", callback);
+  }
+
   public getSocketId(): string | undefined {
     return this.socket.id;
   }
@@ -94,5 +99,11 @@ export class SocketManager {
   public getAuthUser() {
     // this.Socket.data is already validated
     return this.socket.data.auth;
+  }
+  public join(rooms: string | Array<string>) {
+    return this.socket.join(rooms);
+  }
+  public leave(room: string) {
+    return this.socket.leave(room);
   }
 }

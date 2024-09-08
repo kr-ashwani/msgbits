@@ -17,10 +17,6 @@ import RedisPubSub from "./redis";
 import { Server } from "socket.io";
 import { createAdapter } from "@socket.io/redis-streams-adapter";
 import RedisConnection from "./redis/redisConnection";
-import {
-  registerSocketHandlers,
-  registerAdminSocketHandlers,
-} from "./socket/EventHandlers/registerSocketHandlers";
 import { instrument } from "@socket.io/admin-ui";
 import os from "os";
 import {
@@ -32,6 +28,7 @@ import "./model/role.model";
 import validateUserAndRefreshToken from "./middleware/validateUserAndRefreshToken";
 import { SocketManager } from "./socket/SocketIOManager/SocketManager";
 import { SocketService } from "./service/socket/SocketService";
+import { AdminSocketService } from "./service/socket/admin/AdminSocketService";
 
 class App {
   private readonly app;
@@ -91,7 +88,8 @@ class App {
     this.io.use(validateSocketConnection);
     // All business logic will be attached to default namepace /
     this.io.on("connection", (socket) => {
-      registerSocketHandlers(new SocketService(socket, this.io));
+      //Socket Service handles all socket services used by app
+      const socketService = new SocketService(socket, this.io);
     });
     //socket io ui for admin only
     this.initializeSocketIOadminUI();
@@ -101,9 +99,10 @@ class App {
     const adminNamespace = this.io.of("/admin");
     // validate admin namespace first
     adminNamespace.use(validateSocketConnection);
-    adminNamespace.on("connection", (socket) =>
-      registerAdminSocketHandlers(new SocketService(socket, this.io))
-    );
+    adminNamespace.on("connection", (socket) => {
+      //Admin Socket Service handles all socket services used by app
+      const adminSocketService = new AdminSocketService(socket, this.io);
+    });
     instrument(this.io, {
       serverId: `${os.hostname()}#${process.pid}`,
       auth: {

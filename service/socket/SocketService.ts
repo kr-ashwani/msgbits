@@ -8,15 +8,12 @@ import { SocketChatUserService } from "./SocketChatUserService";
 import { SocketFileService } from "./SocketFileService";
 import { SocketMessageService } from "./SocketMessageService";
 import { SocketSyncService } from "./SocketSyncService";
+import logger from "../../logger";
+import { SocketRoomService } from "./SocketRoomService";
 
 export class SocketService {
   private socket: SocketManager;
   private io: IOManager;
-  private socketMessageService;
-  private socketChatRoomService;
-  private socketFileService;
-  private socketChatUserService;
-  private socketSyncService;
 
   constructor(
     socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, SocketAuthData>,
@@ -24,26 +21,29 @@ export class SocketService {
   ) {
     this.socket = new SocketManager(socket);
     this.io = new IOManager(io);
-    this.socketChatRoomService = new SocketChatRoomService(this.socket, this.io);
-    this.socketMessageService = new SocketMessageService(this.socket, this.io);
-    this.socketFileService = new SocketFileService(this.socket, this.io);
-    this.socketChatUserService = new SocketChatUserService(this.socket, this.io);
-    this.socketSyncService = new SocketSyncService(this.socket, this.io);
+    this.init();
   }
 
+  init() {
+    this.logSocketConnection();
+    new SocketRoomService(this.socket, this.io);
+    new SocketChatRoomService(this.socket, this.io);
+    new SocketMessageService(this.socket, this.io);
+    new SocketFileService(this.socket, this.io);
+    new SocketChatUserService(this.socket, this.io);
+    new SocketSyncService(this.socket, this.io);
+  }
   getSocket() {
     return this.socket;
   }
   getIO() {
     return this.io;
   }
-  getChatServices() {
-    return {
-      chatRoomService: this.socketChatRoomService,
-      chatUserService: this.socketChatUserService,
-      fileService: this.socketFileService,
-      messageService: this.socketMessageService,
-      syncService: this.socketSyncService,
-    };
+  logSocketConnection() {
+    logger.info(
+      `User ${this.socket.getAuthUser().name} : ${
+        this.socket.getAuthUser().email
+      } connected with socketid : ${this.socket.getSocketId()}`
+    );
   }
 }

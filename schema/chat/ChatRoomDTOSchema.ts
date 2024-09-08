@@ -12,9 +12,6 @@ const ChatRoomDTOBaseSchema = z.object({
       required_error: "Members is required",
     }
   ),
-  lastMessageId: z.string({
-    required_error: "Last Message Id is required",
-  }),
   createdBy: z.string({
     required_error: "createdBy is required",
   }),

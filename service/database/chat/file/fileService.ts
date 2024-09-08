@@ -5,18 +5,22 @@ import { FileDTO } from "../../../../schema/chat/FileDTOSchema";
 
 class FileService {
   async getFileById(fileId: string): Promise<FileDTO | null> {
-    const fileArr: IFile[] = [];
+    try {
+      const fileArr: IFile[] = [];
 
-    await fileDAO.find(
-      {
-        fileId,
-      },
-      new FileRowMapper((file) => {
-        fileArr.push(file.toObject());
-      })
-    );
+      await fileDAO.find(
+        {
+          fileId,
+        },
+        new FileRowMapper((file) => {
+          fileArr.push(file.toObject());
+        })
+      );
 
-    return fileArr.length ? this.convertIChatRoomToDTO(fileArr[0]) : null;
+      return fileArr.length ? this.convertIChatRoomToDTO(fileArr[0]) : null;
+    } catch (err) {
+      throw err;
+    }
   }
 
   //function overloads

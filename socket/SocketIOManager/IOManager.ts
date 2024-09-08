@@ -1,6 +1,7 @@
 import { Server } from "socket.io";
 import logger from "../../logger";
 import { EmitterMapping, ListenerSchema } from "./types";
+import { SocketManager } from "./SocketManager";
 
 export class IOManager {
   private io: Server;
@@ -81,5 +82,11 @@ export class IOManager {
 
   public ioInst(): Server {
     return this.io;
+  }
+  public in(room: string | string[]) {
+    return this.io.in(room);
+  }
+  public to(room: string | string[]) {
+    return new SocketManager(this.io.to(room) as any);
   }
 }

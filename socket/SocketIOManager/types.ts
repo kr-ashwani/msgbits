@@ -1,12 +1,19 @@
 import { z } from "zod";
 import { ChatRoomDTO, ChatRoomDTOSchema } from "../../schema/chat/ChatRoomDTOSchema";
-import { ChatUserDTOSchema } from "../../schema/chat/ChatUserDTOSchema";
+import { ChatUserDTO, ChatUserDTOSchema } from "../../schema/chat/ChatUserDTOSchema";
 import { MessageDTO, MessageDTOSchema } from "../../schema/chat/MessageDTOSchema";
 import { SyncUpdateInputSchema } from "../../schema/chat/SyncUpdateInputSchema";
 
-export interface ChatRoomEmitterMapping {}
+export interface ChatRoomEmitterMapping {
+  "chatroom-create": ChatRoomDTO;
+}
 
-export interface MessageEmitterMapping {}
+export interface MessageEmitterMapping {
+  "message-create": MessageDTO;
+}
+export interface ChatUserEmitterMapping {
+  "chatuser-getall": ChatUserDTO[];
+}
 
 export interface SyncEmitterMapping {
   "sync-update": string;
@@ -16,7 +23,10 @@ export interface SyncEmitterMapping {
   };
 }
 
-export type EmitterMapping = ChatRoomEmitterMapping & MessageEmitterMapping & SyncEmitterMapping;
+export type EmitterMapping = ChatRoomEmitterMapping &
+  MessageEmitterMapping &
+  SyncEmitterMapping &
+  ChatUserEmitterMapping;
 
 const ChatRoomListenerSchema = {
   "chatroom-create": ChatRoomDTOSchema,
@@ -32,7 +42,6 @@ const MessageListenerSchema = {
 const ChatUserListenerSchema = {
   "chatuser-create": ChatUserDTOSchema,
   "chatuser-update": ChatUserDTOSchema,
-  "chatuser-getall": z.array(ChatUserDTOSchema),
 };
 const SyncListenerSchema = {
   "sync-updateChatRoomAndMessages": SyncUpdateInputSchema,

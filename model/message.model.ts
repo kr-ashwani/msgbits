@@ -66,6 +66,16 @@ const messageSchema = new Schema<IMessage>(
       type: String,
       default: null,
     },
+    deliveredTo: {
+      type: [String],
+      required: [true, "deliveredTo is required"],
+      default: [],
+    },
+    seenBy: {
+      type: [String],
+      required: [true, "seenBy is required"],
+      default: [],
+    },
     type: {
       type: String,
       enum: ["text", "timestamp", "file"],

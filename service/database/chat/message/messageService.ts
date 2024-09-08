@@ -6,51 +6,68 @@ import { MessageDTO } from "../../../../schema/chat/MessageDTOSchema";
 import { fileService } from "../file/fileService";
 
 class MessageService {
+  async createMessage(messageDTO: MessageDTO) {
+    try {
+      let success = false;
+      const message = this.convertDTOToIMessage(messageDTO);
+      await messageDAO.create(
+        message,
+        new MessageRowMapper(() => {
+          success = true;
+        })
+      );
+
+      return success;
+    } catch (err) {
+      throw err;
+    }
+  }
   async getUpdatedMessagesOfChatRoom(
     chatRoomId: string,
     lastUpdatedTimestamp: string | null | undefined
   ): Promise<MessageDTO[]> {
-    const messageArr: IMessage[] = [];
+    try {
+      const messageArr: IMessage[] = [];
 
-    // Prepare the filter object conditionally
-    const filter: FilterQuery<IMessage> = {
-      chatRoomId,
-    };
+      // Prepare the filter object conditionally
+      const filter: FilterQuery<IMessage> = {
+        chatRoomId,
+      };
 
-    // Conditionally include the `updatedAt` filter
-    // get all messages of chatRoom if lastUpdatedTimestamp is not provided
-    if (lastUpdatedTimestamp) {
-      filter.updatedAt = { $gt: lastUpdatedTimestamp };
-    }
-
-    await messageDAO.find(
-      filter,
-      new MessageRowMapper((message) => {
-        messageArr.push(message);
-      }),
-      {
-        sort: { createAt: 1 },
+      // Conditionally include the `updatedAt` filter
+      // get all messages of chatRoom if lastUpdatedTimestamp is not provided
+      if (lastUpdatedTimestamp) {
+        filter.updatedAt = { $gt: lastUpdatedTimestamp };
       }
-    );
 
-    const messageDTO: MessageDTO[] = [];
-    const output = await Promise.all(this.convertIChatRoomToDTO(messageArr));
-    output.forEach((dto) => (dto ? messageDTO.push(dto) : null));
-    return messageDTO;
+      await messageDAO.find(
+        filter,
+        new MessageRowMapper((message) => {
+          messageArr.push(message.toObject());
+        })
+      );
+
+      const messageDTO: MessageDTO[] = [];
+      const output = await Promise.all(this.convertIMessageToDTO(messageArr));
+      output.forEach((dto) => (dto ? messageDTO.push(dto) : null));
+      return messageDTO;
+    } catch (err) {
+      throw err;
+    }
   }
 
   //function overloads
-  convertIChatRoomToDTO(chatRoom: IMessage): Promise<MessageDTO | null>;
-  convertIChatRoomToDTO(chatRoom: IMessage[]): Promise<MessageDTO | null>[];
+  convertIMessageToDTO(chatRoom: IMessage): Promise<MessageDTO | null>;
+  convertIMessageToDTO(chatRoom: IMessage[]): Promise<MessageDTO | null>[];
 
   //function implementations
-  convertIChatRoomToDTO(
+  convertIMessageToDTO(
     message: IMessage | IMessage[]
   ): Promise<MessageDTO | null> | Promise<MessageDTO | null>[] {
-    if (Array.isArray(message)) return message.map(this.convertSingleChatRoomToDTO);
-    else return this.convertSingleChatRoomToDTO(message);
+    if (Array.isArray(message)) return message.map(this.convertSingleIMessageToDTO);
+    else return this.convertSingleIMessageToDTO(message);
   }
-  private async convertSingleChatRoomToDTO(message: IMessage): Promise<MessageDTO | null> {
+  private async convertSingleIMessageToDTO(message: IMessage): Promise<MessageDTO | null> {
     if (message.type === "file") {
       const file = await fileService.getFileById(message.fileId);
       return file
@@ -67,6 +84,23 @@ class MessageService {
         createdAt: message.createdAt.toISOString(),
         updatedAt: message.updatedAt.toISOString(),
       };
+  }
+  private convertDTOToIMessage(messageDTO: MessageDTO): IMessage {
+    if (messageDTO.type === "file") {
+      return {
+        ...messageDTO,
+        createdAt: new Date(messageDTO.createdAt),
+        updatedAt: new Date(messageDTO.updatedAt),
+        fileId: messageDTO.file.fileId,
+        status: "sent",
+      };
+    }
+    return {
+      ...messageDTO,
+      createdAt: new Date(messageDTO.createdAt),
+      updatedAt: new Date(messageDTO.updatedAt),
+      status: "sent",
+    };
   }
 }
 

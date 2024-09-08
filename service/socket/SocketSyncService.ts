@@ -13,6 +13,7 @@ export class SocketSyncService {
   constructor(socket: SocketManager, io: IOManager) {
     this.socket = socket;
     this.io = io;
+    this.init();
   }
   init() {
     this.requestForSync();
@@ -25,7 +26,7 @@ export class SocketSyncService {
    *
    * @param payload
    */
-  private async updateChatRoomAndMessages(payload: SyncUpdateInput) {
+  private updateChatRoomAndMessages = async (payload: SyncUpdateInput) => {
     const userId = this.socket.getAuthUser().id;
 
     const chatRooms = await chatRoomService.getAllChatRoomIdAssociatedWithUserId(userId);
@@ -46,6 +47,7 @@ export class SocketSyncService {
         chatRoomId,
         clientRoomSyncPayload?.lastMessageTimestamp
       );
+
       messagesOut[chatRoomId] = messages;
     }
 
@@ -54,5 +56,5 @@ export class SocketSyncService {
       chatRoom: chatRoomOut,
       message: messagesOut,
     });
-  }
+  };
 }

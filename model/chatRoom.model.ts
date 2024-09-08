@@ -5,7 +5,6 @@ import { Schema, Types, model } from "mongoose";
 interface IChatRoomBase {
   chatRoomId: string;
   members: string[];
-  lastMessageId: string;
   createdBy: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
@@ -52,10 +51,6 @@ const chatRoomSchema = new Schema<IChatRoom>(
         validator: (v: string[]) => Array.isArray(v) && v.length > 0,
         message: "Members array must contain at least one member",
       },
-    },
-    lastMessageId: {
-      type: String,
-      required: [true, "Last message ID is required"],
     },
     type: {
       type: String,

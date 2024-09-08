@@ -3,48 +3,88 @@ import { IChatRoom } from "../../../../model/chatRoom.model";
 import { chatRoomDAO } from "../../../../Dao/ChatRoomDAO";
 import { ChatRoomRowMapper } from "../../../../Dao/RowMapper/ChatRoomRowMapper";
 import { GenericRowMapper } from "../../../../Dao/RowMapper/GenericRowMapper";
-import { FilterQuery } from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 
 class ChatRoomService {
+  async getChatRoomByID(chatRoomId: string) {
+    try {
+      let chatRoomArr: IChatRoom[] = [];
+
+      await chatRoomDAO.find(
+        { chatRoomId },
+        new ChatRoomRowMapper((chatRoom) => {
+          chatRoomArr.push(chatRoom.toObject());
+        })
+      );
+
+      return chatRoomArr.length ? this.convertIChatRoomToDTO(chatRoomArr[0]) : null;
+    } catch (err) {
+      throw err;
+    }
+  }
+  async createChatRoom(chatRoomDTO: ChatRoomDTO) {
+    try {
+      let success = false;
+      const chatRoom = this.convertDTOToIChatRoom(chatRoomDTO);
+      await chatRoomDAO.create(
+        chatRoom,
+        new ChatRoomRowMapper(() => {
+          success = true;
+        })
+      );
+
+      return success;
+    } catch (err) {
+      throw err;
+    }
+  }
   async getAllChatRoomIdAssociatedWithUserId(userId: string) {
-    const chatRooms: string[] = [];
+    try {
+      const chatRooms: string[] = [];
 
-    await chatRoomDAO.find(
-      {
-        members: { $in: [userId] },
-      },
-      new GenericRowMapper<{ chatRoomId: string }>((data) => {
-        chatRooms.push(data.chatRoomId);
-      }),
-      null,
-      "chatRoomId"
-    );
+      await chatRoomDAO.find(
+        {
+          members: { $in: [userId] },
+        },
+        new GenericRowMapper<{ chatRoomId: string }>((data) => {
+          chatRooms.push(data.chatRoomId);
+        }),
+        null,
+        "chatRoomId"
+      );
 
-    return chatRooms;
+      return chatRooms;
+    } catch (err) {
+      throw err;
+    }
   }
   async getUpdatedChatRoom(
     chatRoomId: string,
     updatedTimestamp: string | null | undefined
   ): Promise<ChatRoomDTO | null> {
-    const chatRoomArr: IChatRoom[] = [];
+    try {
+      const chatRoomArr: IChatRoom[] = [];
 
-    const filter: FilterQuery<IChatRoom> = {
-      chatRoomId,
-    };
-    // Conditionally include the `updatedAt` filter
-    // get chatRoom if updatedtimestamp is not mentioned
-    if (updatedTimestamp) {
-      filter.updatedAt = { $gt: updatedTimestamp };
+      const filter: FilterQuery<IChatRoom> = {
+        chatRoomId,
+      };
+      // Conditionally include the `updatedAt` filter
+      // get chatRoom if updatedtimestamp is not mentioned
+      if (updatedTimestamp) {
+        filter.updatedAt = { $gt: updatedTimestamp };
+      }
+
+      await chatRoomDAO.find(
+        filter,
+        new ChatRoomRowMapper((chatRoom) => {
+          chatRoomArr.push(chatRoom.toObject());
+        })
+      );
+
+      return chatRoomArr.length ? this.convertIChatRoomToDTO(chatRoomArr[0]) : null;
+    } catch (err) {
+      throw err;
     }
-
-    await chatRoomDAO.find(
-      filter,
-      new ChatRoomRowMapper((chatRoom) => {
-        chatRoomArr.push(chatRoom.toObject());
-      })
-    );
-
-    return chatRoomArr.length ? this.convertIChatRoomToDTO(chatRoomArr[0]) : null;
   }
 
   //function overloads
@@ -66,6 +106,16 @@ class ChatRoomService {
       updatedAt: chatRoom.updatedAt.toISOString(),
       createdBy: chatRoom.createdBy.toString(),
     };
+  }
+
+  private convertDTOToIChatRoom(chatRoom: ChatRoomDTO): IChatRoom {
+    const IchatRoom: IChatRoom = {
+      ...chatRoom,
+      createdBy: new mongoose.Types.ObjectId(chatRoom.createdBy),
+      createdAt: new Date(chatRoom.createdAt),
+      updatedAt: new Date(chatRoom.updatedAt),
+    };
+    return IchatRoom;
   }
 }
 

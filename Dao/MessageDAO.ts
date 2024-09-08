@@ -24,7 +24,7 @@ class MessageDAO extends DmlDAO<IMessage, IMessage> {
    * @param options
    */
   async create(
-    docs: IMessage[],
+    docs: IMessage | IMessage[],
     rowMapper: RowMapper<HydratedDocument<IMessage>>,
     options?: CreateOptions
   ) {
