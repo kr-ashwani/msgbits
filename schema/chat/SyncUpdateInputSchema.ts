@@ -11,6 +11,7 @@ export const SyncUpdateInputSchema = z.object({
     })
   ),
   lastChatUserCreatedAt: z.string().nullable(),
+  socketLastDisconnectedAt: z.string().nullable(),
 });
 
 export type SyncUpdateInput = z.infer<typeof SyncUpdateInputSchema>;

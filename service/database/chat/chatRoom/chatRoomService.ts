@@ -4,8 +4,34 @@ import { chatRoomDAO } from "../../../../Dao/ChatRoomDAO";
 import { ChatRoomRowMapper } from "../../../../Dao/RowMapper/ChatRoomRowMapper";
 import { GenericRowMapper } from "../../../../Dao/RowMapper/GenericRowMapper";
 import mongoose, { FilterQuery } from "mongoose";
+import { ChatAddNewMember } from "../../../../schema/chat/ChatAddNewMemberSchema";
 
 class ChatRoomService {
+  async addNewMembers({ chatRoomId, newMember }: ChatAddNewMember) {
+    try {
+      let chatRoom: IChatRoom | null = null;
+
+      await chatRoomDAO.update(
+        {
+          chatRoomId,
+          members: { $nin: newMember },
+        },
+        {
+          $push: {
+            members: { $each: newMember },
+          },
+        },
+        new ChatRoomRowMapper((result) => {
+          chatRoom = result.toObject();
+        }),
+        { new: true }
+      );
+
+      return chatRoom ? this.convertIChatRoomToDTO(chatRoom) : null;
+    } catch (err) {
+      throw err;
+    }
+  }
   async updateLastMessageId(chatRoomId: string, messageId: string, updatedAt: string) {
     try {
       let success = false;

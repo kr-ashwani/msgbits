@@ -20,8 +20,8 @@ interface ITextMessage extends IMessageBase {
 }
 
 // Interface for timestamp messages
-interface ITimestampMessage extends IMessageBase {
-  type: "timestamp";
+interface IInfoMessage extends IMessageBase {
+  type: "info";
 }
 
 // Interface for file messages
@@ -31,7 +31,7 @@ interface IFileMessage extends IMessageBase {
 }
 
 // Messsage interface
-export type IMessage = ITextMessage | ITimestampMessage | IFileMessage;
+export type IMessage = ITextMessage | IInfoMessage | IFileMessage;
 
 // Mongoose schema definition
 const messageSchema = new Schema<IMessage>(
@@ -46,12 +46,7 @@ const messageSchema = new Schema<IMessage>(
     },
     message: {
       type: String,
-      required: [
-        function (this: IMessage) {
-          return this.type !== "timestamp";
-        },
-        "Message content is required for non-timestamp messages",
-      ],
+      required: [true, "Message  is required"],
     },
     senderId: {
       type: String,
@@ -78,7 +73,7 @@ const messageSchema = new Schema<IMessage>(
     },
     type: {
       type: String,
-      enum: ["text", "timestamp", "file"],
+      enum: ["text", "info", "file"],
       required: [true, "Message type is required"],
     },
     fileId: {

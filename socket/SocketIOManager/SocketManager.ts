@@ -3,6 +3,8 @@ import logger from "../../logger";
 import { EmitterMapping, ListenerSchema } from "./types";
 import { SocketAuthData } from "../EventHandlers/validateSocketConnection";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
+import handleError from "../../errorhandler/ErrorHandler";
+import { AppError, errToAppError } from "../../errors/AppError";
 
 export class SocketManager {
   private socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, SocketAuthData>;
@@ -21,18 +23,24 @@ export class SocketManager {
 
   public on<K extends keyof ListenerSchema>(
     event: K,
-    callback: (payload: Zod.infer<ListenerSchema[K]>) => void
+    callback: (payload: Zod.infer<ListenerSchema[K]>) => Promise<void>
   ) {
-    const eventHandler = (payload: any, ack: any) => {
+    const eventHandler = async (payload: any, ack: any) => {
       const result = ListenerSchema[event].safeParse(payload);
       if (result.success) {
-        callback(result.data);
-        if (typeof ack === "function") ack();
+        // wait for the callback to execute
+        try {
+          await callback(result.data);
+          if (typeof ack === "function") ack();
+        } catch (err) {
+          if (err instanceof Error) handleError(errToAppError(err));
+          else handleError(new AppError("Failure in socket listener"));
+          if (typeof ack === "function") ack({ success: false, error: "Something went wrong" });
+        }
       } else {
-        console.log(result.error);
         const error = `ValidationError: client did not correctly send ${event} event data`;
         if (typeof ack === "function") ack({ success: false, error });
-        logger.error(error);
+        handleError(new AppError(error));
       }
     };
     this.socket.on(event as string, eventHandler);

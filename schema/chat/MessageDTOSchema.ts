@@ -46,8 +46,8 @@ const TextMessageDTOSchema = MessageDTOBaseSchema.extend({
   type: z.literal("text"),
 });
 
-const TimestampMessageSchema = MessageDTOBaseSchema.extend({
-  type: z.literal("timestamp"),
+const InfoMessageSchema = MessageDTOBaseSchema.extend({
+  type: z.literal("info"),
 });
 
 const FileMessageDTOSchema = MessageDTOBaseSchema.extend({
@@ -57,12 +57,12 @@ const FileMessageDTOSchema = MessageDTOBaseSchema.extend({
 
 export const MessageDTOSchema = z.discriminatedUnion("type", [
   TextMessageDTOSchema,
-  TimestampMessageSchema,
+  InfoMessageSchema,
   FileMessageDTOSchema,
 ]);
 
 export type MessageBaseDTO = z.infer<typeof MessageDTOBaseSchema>;
 export type TextMessageDTO = z.infer<typeof TextMessageDTOSchema>;
-export type TimestampMessageDTO = z.infer<typeof TimestampMessageSchema>;
+export type InfoMessageDTO = z.infer<typeof InfoMessageSchema>;
 export type FileMessageDTO = z.infer<typeof FileMessageDTOSchema>;
 export type MessageDTO = z.infer<typeof MessageDTOSchema>;

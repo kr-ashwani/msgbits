@@ -17,14 +17,15 @@ export class SocketMessageService {
   }
   init() {
     this.socket.on("message-create", this.createMessage);
-    this.socket.on("message-delivered", (payload) => {
-      this.updateMessageStatus("delivered", payload);
+    this.socket.on("message-delivered", async (payload) => {
+      await this.updateMessageStatus("delivered", payload);
     });
-    this.socket.on("message-seen", (payload) => {
-      this.updateMessageStatus("delivered", payload);
+    this.socket.on("message-seen", async (payload) => {
+      await this.updateMessageStatus("seen", payload);
     });
   }
   createMessage = async (payload: MessageDTO) => {
+    payload.status = "sent";
     const success = await messageService.createMessage(payload);
 
     //update last messageId of chatRoom
@@ -33,8 +34,7 @@ export class SocketMessageService {
       payload.messageId,
       payload.updatedAt
     );
-
-    this.socket.emit("message-sent", payload.messageId);
+    if (payload.type !== "info") this.socket.emit("message-sent", payload.messageId);
     this.emitToAllRoomParticipantsExceptThisSocket(payload.chatRoomId, "message-create", payload);
   };
   updateMessageStatus = async (action: "delivered" | "seen", payload: MessageStatusInput) => {
@@ -53,6 +53,7 @@ export class SocketMessageService {
     Object.entries(chatRoomToMsgs).forEach((state) => {
       const [chatRoomId, messageIds] = state;
       const event = action === "delivered" ? "message-delivered" : "message-seen";
+
       this.emitToAllRoomParticipantsExceptThisSocket(chatRoomId, event, {
         messageIds,
         userId,

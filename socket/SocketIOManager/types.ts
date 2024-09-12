@@ -7,9 +7,11 @@ import {
   MessageStatusInputSchema,
   MessageStatusOutput,
 } from "../../schema/chat/MessageStatusInputSchema";
+import { ChatAddNewMember, ChatAddNewMemberSchema } from "../../schema/chat/ChatAddNewMemberSchema";
 
 export interface ChatRoomEmitterMapping {
   "chatroom-create": ChatRoomDTO;
+  "chatroom-addNewMembers": ChatAddNewMember;
 }
 
 export interface MessageEmitterMapping {
@@ -40,6 +42,7 @@ const ChatRoomListenerSchema = {
   "chatroom-create": ChatRoomDTOSchema,
   "chatroom-update": ChatRoomDTOSchema,
   "chatroom-getall": z.array(ChatRoomDTOSchema),
+  "chatroom-addNewMembers": ChatAddNewMemberSchema,
 };
 
 const MessageListenerSchema = {

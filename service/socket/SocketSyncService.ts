@@ -41,12 +41,18 @@ export class SocketSyncService {
 
       const room = await chatRoomService.getUpdatedChatRoom(
         chatRoomId,
-        clientRoomSyncPayload?.lastUpdateTimestamp
+        this.getSmallerTime(
+          clientRoomSyncPayload?.lastUpdateTimestamp,
+          payload.socketLastDisconnectedAt
+        )
       );
       if (room) chatRoomOut.push(room);
       const messages = await messageService.getUpdatedMessagesOfChatRoom(
         chatRoomId,
-        clientRoomSyncPayload?.lastMessageTimestamp
+        this.getSmallerTime(
+          clientRoomSyncPayload?.lastMessageTimestamp,
+          payload.socketLastDisconnectedAt
+        )
       );
 
       if (messages.length) messagesOut[chatRoomId] = messages;
@@ -61,5 +67,16 @@ export class SocketSyncService {
       message: messagesOut,
       chatUser,
     });
+  };
+  private getSmallerTime = (timeA: string | null, timeB: string | null): string | null => {
+    try {
+      if (timeA && timeB) {
+        const timeAinMS = new Date(timeA).getTime();
+        const timeBinMS = new Date(timeB).getTime();
+        return timeAinMS < timeBinMS ? timeA : timeB;
+      } else return timeA || timeB;
+    } catch (err) {
+      return null;
+    }
   };
 }
