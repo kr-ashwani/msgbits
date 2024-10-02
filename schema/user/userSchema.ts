@@ -25,12 +25,6 @@ export const createUserSchema = z.object({
       required_error: "Email is required",
     })
     .email("Not a valid email"),
-  profileColor: z.string({
-    required_error: "profile color is required",
-  }),
-  lastOnline: z.string({
-    required_error: "last online is required",
-  }),
   profilePicture: z.string({
     required_error: "profile picture is required",
   }),

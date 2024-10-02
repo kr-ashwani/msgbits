@@ -9,9 +9,9 @@ export interface IFile {
   extension: string; // File extension
   url: string;
   dimension: {
-    width: number | null;
-    height: number | null;
-  };
+    width: number;
+    height: number;
+  } | null;
 }
 
 // Mongoose schema for File
@@ -60,25 +60,9 @@ const fileSchema = new Schema<IFile>(
       },
     },
     dimension: {
-      type: {
-        width: {
-          type: Number,
-          default: null,
-        },
-        height: {
-          type: Number,
-          default: null,
-        },
-      },
-      required: [
-        function (this: IFile) {
-          return this.fileType.startsWith("image/") || this.fileType.startsWith("video/");
-        },
-        "Dimensions are required for image and video files",
-      ],
-      default: null,
+      type: Schema.Types.Mixed,
       validate: {
-        validator: function (this: IFile, v: { width: number | null; height: number | null }) {
+        validator: function (this: IFile, v: any) {
           if (this.fileType.startsWith("image/") || this.fileType.startsWith("video/")) {
             return v && typeof v.width === "number" && typeof v.height === "number";
           }

@@ -19,21 +19,19 @@ export const FileDTOSchema = z.object({
   url: z.string({
     required_error: "File URL is required",
   }),
-  dimension: z.object(
-    {
-      width: z
-        .number({
+  dimension: z
+    .object(
+      {
+        width: z.number({
           required_error: "Width is required",
-        })
-        .nullable(),
-      height: z
-        .number({
+        }),
+        height: z.number({
           required_error: "Height is required",
-        })
-        .nullable(),
-    },
-    { required_error: "File Dimension is required" }
-  ),
+        }),
+      },
+      { required_error: "File Dimension is required" }
+    )
+    .nullable(),
 });
 
 export type FileDTO = z.infer<typeof FileDTOSchema>;

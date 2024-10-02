@@ -4,15 +4,34 @@ import path from "path";
 import dbTansport from "./dbTransport";
 import handleError from "../errorhandler/ErrorHandler";
 import { errToAppError } from "../errors/AppError";
+import { parseStack } from "../utils/parseStack";
 
 const { combine, timestamp, json, errors } = format;
 
 const MONGODB_URI_LOG = config.get<string>("MONGODB_URI_LOG");
 
+// Updated myFormat function
+const myFormat = format((info) => {
+  const { level, message, stack, timestamp } = info;
+  let errorMsg = `${timestamp} [pid:${process.pid}] ${level.toUpperCase()}: ${message}`;
+
+  if (level === "error" && stack) {
+    const parsedStack = parseStack(stack);
+    if (parsedStack) errorMsg += ` (${parsedStack.absoluteFilePath}:${parsedStack.lineNumber})`;
+  }
+
+  info[Symbol.for("message")] = errorMsg;
+  return info;
+});
+
 const productionLogger = function () {
   return createLogger({
     level: "error",
-    format: combine(errors({ stack: true })),
+    format: combine(
+      timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+      errors({ stack: true }),
+      myFormat()
+    ),
     exitOnError: (err: Error) => {
       handleError(errToAppError(err, true));
       return true;
