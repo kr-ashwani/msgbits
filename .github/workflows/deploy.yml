@@ -68,7 +68,7 @@ jobs:
       run: |
         ssh -i private_key -o StrictHostKeyChecking=no ${USER}@${HOST} "
           export DOCKER_REPO=${{ env.DOCKER_REPO }}
-          export IMAGE_TAG=${{ github.sha }}
+          export GITHUB_SHA=${{ github.sha }}
           
           echo 'Pulling latest images...'
           docker-compose pull
