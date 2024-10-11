@@ -15,7 +15,7 @@ services:
       - app-network
     
   redis:
-    image: "redis:7.0-alpine"
+    image: ${DOCKER_REPO}/redis:${GITHUB_SHA}
     volumes:
       - redis_data:/data
     networks:
