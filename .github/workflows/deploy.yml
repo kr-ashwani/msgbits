@@ -67,7 +67,7 @@ jobs:
         USER: ubuntu
       run: |
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
-        scp -i private_key -o StrictHostKeyChecking=no docker-compose.yml ${USER}@${HOST}:~/docker-compose.yml
+        scp -i private_key -o StrictHostKeyChecking=no docker-compose.yml ${USER}@${HOST}:~/msgbits/backend/docker-compose.yml
 
 
     - name: Deploy to EC2
@@ -79,6 +79,7 @@ jobs:
         ssh -i private_key -o StrictHostKeyChecking=no ${USER}@${HOST} "
           export DOCKER_REPO=${{ env.DOCKER_REPO }}
           export GITHUB_SHA=${{ github.sha }}
+          cd ~/msgbits/backend
           
           echo 'Pulling latest images...'
           docker-compose pull
