@@ -81,6 +81,7 @@ jobs:
           export DOCKER_REPO=${{ env.DOCKER_REPO }}
           export GITHUB_SHA=${{ github.sha }}
           cd ~/msgbits/backend
+          mkdir -p ~/msgbits/encryptedFiles
           
           echo 'Pulling latest images...'
           docker-compose pull
