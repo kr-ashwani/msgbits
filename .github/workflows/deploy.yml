@@ -30,6 +30,9 @@ jobs:
         GITHUB_SHA: ${{ github.sha }}
       run: |
         # Build all services
+        # Build all services
+        echo "$ENV_PROD" > .env.production
+
         docker compose build
 
         # Tag and push each service
@@ -48,6 +51,10 @@ jobs:
           docker tag $image ${DOCKER_REPO}/${service}:latest
           docker push ${DOCKER_REPO}/${service}:latest
         done
+
+    # Remove the .env.production file after docker operations
+    - name: Cleanup
+      run: rm -f .env.production       
         
 
   deploy:
@@ -81,7 +88,7 @@ jobs:
           export DOCKER_REPO=${DOCKER_REPO}
           export GITHUB_SHA=${GITHUB_SHA}
           mkdir -p ~/msgbits/encryptedFiles
-          
+
           echo "$ENV_PROD" > .env.production
           
           echo 'Pulling latest images...'
