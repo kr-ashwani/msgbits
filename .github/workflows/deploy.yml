@@ -24,15 +24,17 @@ jobs:
         password: ${{ secrets.DOCKERHUB_TOKEN }}
 
 
+    - name: Create .env.production file
+      run: |
+        echo "${{ secrets.ENV_PROD }}" > .env.production    
+
+
     - name: Build and push with Docker Compose
       env:
         DOCKER_REPO: ${{ secrets.DOCKERHUB_USERNAME }}
         GITHUB_SHA: ${{ github.sha }}
       run: |
         # Build all services
-        # Build all services
-        echo "${{ secrets.ENV_PROD }}" > .env.production
-
         docker compose build
 
         # Tag and push each service
@@ -63,6 +65,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Create .env.production file
+      run: |
+        echo "${{ secrets.ENV_PROD }}" > .env.production
+
     - name: Copy files to EC2
       env:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
@@ -73,7 +79,6 @@ jobs:
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
         ssh -i private_key -o StrictHostKeyChecking=no ${USER}@${HOST} "mkdir -p ~/msgbits/backend"
         scp -i private_key -o StrictHostKeyChecking=no docker-compose.yml ${USER}@${HOST}:~/msgbits/backend/docker-compose.yml
-        echo "${{ secrets.ENV_PROD }}" > .env.production
         scp -i private_key -o StrictHostKeyChecking=no .env.production ${USER}@${HOST}:~/msgbits/backend/.env.production
 
 
@@ -91,8 +96,6 @@ jobs:
           export DOCKER_REPO=${DOCKER_REPO}
           export GITHUB_SHA=${GITHUB_SHA}
           mkdir -p ~/msgbits/encryptedFiles
-
-          echo "${{ secrets.ENV_PROD }}" > .env.production
           
           echo 'Pulling latest images...'
           docker-compose pull
