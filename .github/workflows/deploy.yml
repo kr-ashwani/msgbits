@@ -88,7 +88,6 @@ jobs:
         USER: ubuntu
         DOCKER_REPO: ${{ secrets.DOCKERHUB_USERNAME }}
         GITHUB_SHA: ${{ github.sha }}
-        ENV_PROD: ${{ secrets.ENV_PROD }}
       run: |
         ssh -i private_key -o StrictHostKeyChecking=no ${USER}@${HOST} "
           cd ~/msgbits/backend
@@ -112,4 +111,8 @@ jobs:
 
       # Remove the .env.production file after docker operations
     - name: Cleanup
-      run: rm -f .env.production      
+      env:
+        PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
+      run: |
+        rm -f .env.production
+        ssh -i private_key -o StrictHostKeyChecking=no ${USER}@${HOST} "rm -f ~/msgbits/backend/.env.production"      
