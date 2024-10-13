@@ -31,7 +31,7 @@ jobs:
       run: |
         # Build all services
         # Build all services
-        echo "$ENV_PROD" > .env.production
+        echo "${{ secrets.ENV_PROD }}" > .env.production
 
         docker compose build
 
@@ -68,12 +68,12 @@ jobs:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_PRIVATE_KEY }}
         HOST: ${{ secrets.EC2_HOST }}
         USER: ubuntu
-        ENV_PROD: ${{ secrets.ENV_PROD }}
+        ENV_PROD: 
       run: |
         echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
         ssh -i private_key -o StrictHostKeyChecking=no ${USER}@${HOST} "mkdir -p ~/msgbits/backend"
         scp -i private_key -o StrictHostKeyChecking=no docker-compose.yml ${USER}@${HOST}:~/msgbits/backend/docker-compose.yml
-        echo "$ENV_PROD" > .env.production
+        echo "${{ secrets.ENV_PROD }}" > .env.production
         scp -i private_key -o StrictHostKeyChecking=no .env.production ${USER}@${HOST}:~/msgbits/backend/.env.production
 
 
@@ -92,7 +92,7 @@ jobs:
           export GITHUB_SHA=${GITHUB_SHA}
           mkdir -p ~/msgbits/encryptedFiles
 
-          echo "$ENV_PROD" > .env.production
+          echo "${{ secrets.ENV_PROD }}" > .env.production
           
           echo 'Pulling latest images...'
           docker-compose pull
