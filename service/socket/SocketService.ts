@@ -10,6 +10,7 @@ import { SocketMessageService } from "./SocketMessageService";
 import { SocketSyncService } from "./SocketSyncService";
 import logger from "../../logger";
 import { SocketRoomService } from "./SocketRoomService";
+import { SocketWebRTCService } from "./SocketWebRTCService";
 
 export class SocketService {
   private socket: SocketManager;
@@ -31,6 +32,7 @@ export class SocketService {
     new SocketFileService(this.socket, this.io);
     new SocketChatUserService(this.socket, this.io);
     new SocketSyncService(this.socket, this.io);
+    new SocketWebRTCService(this.socket, this.io);
   }
   getSocket() {
     return this.socket;

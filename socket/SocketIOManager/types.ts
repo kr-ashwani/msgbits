@@ -20,7 +20,31 @@ import {
   GroupChatProfileUpdate,
   GroupChatProfileUpdateSchema,
 } from "../../schema/user/GroupChatProfileUpdate";
-
+import {
+  IWebRTCStartCall,
+  IWebRTCJoinCall,
+  IWebRTCEndCall,
+  IWebRTCIncomingCall,
+  IWebRTCDeclineCall,
+  IWebRTCGetActiveParticipants,
+  IWebRTCOffer,
+  IWebRTCAnswer,
+  IWebRTCIceCandidate,
+  IWebRTCMediaTrack,
+  IWebRTCMediaStateChange,
+  IWebRTCRoomFull,
+  WebRTCStartCallSchema,
+  WebRTCJoinCallSchema,
+  WebRTCEndCallSchema,
+  WebRTCIncomingCallSchema,
+  WebRTCGetActiveParticipantsSchema,
+  WebRTCOfferSchema,
+  WebRTCAnswerSchema,
+  WebRTCIceCandidateSchema,
+  WebRTCMediaTrackSchema,
+  WebRTCMediaStateChangeSchema,
+  WebRTCRoomFullSchema,
+} from "../../schema/webRTC/WebRTCSchema";
 export interface ChatRoomEmitterMapping {
   "chatroom-create": ChatRoomDTO;
   "chatroom-addNewMembers": ChatAddNewMember;
@@ -56,11 +80,26 @@ export interface SyncEmitterMapping {
   };
   "sync-allUserStatus": string[];
 }
+export interface WebRTCEmitterMapping {
+  "webrtc-startCall": IWebRTCStartCall;
+  "webrtc-joinCall": IWebRTCJoinCall;
+  "webrtc-endCall": IWebRTCEndCall;
+  "webrtc-incomingCall": IWebRTCIncomingCall;
+  "webrtc-declineCall": IWebRTCDeclineCall;
+  "webrtc-getActiveParticipants": IWebRTCGetActiveParticipants;
+  "webrtc-offer": IWebRTCOffer;
+  "webrtc-answer": IWebRTCAnswer;
+  "webrtc-iceCandidate": IWebRTCIceCandidate;
+  "webrtc-trackAdded": IWebRTCMediaTrack;
+  "webrtc-mediaStateChange": IWebRTCMediaStateChange;
+  "webrtc-roomFull": IWebRTCRoomFull;
+}
 
 export type EmitterMapping = ChatRoomEmitterMapping &
   MessageEmitterMapping &
   SyncEmitterMapping &
-  ChatUserEmitterMapping;
+  ChatUserEmitterMapping &
+  WebRTCEmitterMapping;
 
 const ChatRoomListenerSchema = {
   "chatroom-create": ChatRoomDTOSchema,
@@ -89,11 +128,27 @@ const SyncListenerSchema = {
   heartbeat: z.string(),
 };
 
+const WebRTCListenerSchema = {
+  "webrtc-startCall": WebRTCStartCallSchema,
+  "webrtc-joinCall": WebRTCJoinCallSchema,
+  "webrtc-endCall": WebRTCEndCallSchema,
+  "webrtc-incomingCall": WebRTCIncomingCallSchema,
+  "webrtc-declineCall": WebRTCEndCallSchema,
+  "webrtc-getActiveParticipants": WebRTCGetActiveParticipantsSchema,
+  "webrtc-offer": WebRTCOfferSchema,
+  "webrtc-answer": WebRTCAnswerSchema,
+  "webrtc-iceCandidate": WebRTCIceCandidateSchema,
+  "webrtc-trackAdded": WebRTCMediaTrackSchema,
+  "webrtc-mediaStateChange": WebRTCMediaStateChangeSchema,
+  "webrtc-roomFull": WebRTCRoomFullSchema,
+};
+
 const ListenerSchema = {
   ...ChatRoomListenerSchema,
   ...MessageListenerSchema,
   ...ChatUserListenerSchema,
   ...SyncListenerSchema,
+  ...WebRTCListenerSchema,
 };
 
 export type ListenerSchema = typeof ListenerSchema;
