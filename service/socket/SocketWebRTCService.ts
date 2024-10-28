@@ -1,20 +1,19 @@
+import Redis from "ioredis";
+import config from "config";
+import {
+  IWebRTCAnswer,
+  IWebRTCEndCall,
+  IWebRTCGetActiveParticipants,
+  IWebRTCIceCandidate,
+  IWebRTCMediaStateChange,
+  IWebRTCOffer,
+  IWebRTCStartCall,
+} from "../../schema/webRTC/WebRTCSchema";
 import { SocketAuthData } from "../../socket/EventHandlers/validateSocketConnection";
 import { IOManager } from "../../socket/SocketIOManager/IOManager";
 import { SocketManager } from "../../socket/SocketIOManager/SocketManager";
 import { chatRoomService } from "../database/chat/chatRoom/chatRoomService";
-import Redis from "ioredis";
-import config from "config";
 import RedisConnection from "../../redis/redisConnection";
-import {
-  IWebRTCAnswer,
-  IWebRTCGetActiveParticipants,
-  IWebRTCIceCandidate,
-  IWebRTCJoinCall,
-  IWebRTCMediaStateChange,
-  IWebRTCMediaTrack,
-  IWebRTCOffer,
-  IWebRTCStartCall,
-} from "../../schema/webRTC/WebRTCSchema";
 
 export class SocketWebRTCService {
   private socket: SocketManager;
@@ -39,16 +38,77 @@ export class SocketWebRTCService {
   }
   init() {
     this.socket.on("webrtc-startCall", this.handleStartCall);
-    // this.socket.on("webrtc-joinCall", this.handleJoinCall);
     this.socket.on("webrtc-getActiveParticipants", this.handleGetActiveParticipants);
     this.socket.on("webrtc-endCall", this.handleEndCall);
     this.socket.on("webrtc-offer", this.handleOffer);
     this.socket.on("webrtc-answer", this.handleAnswer);
     this.socket.on("webrtc-iceCandidate", this.handleIceCandidate);
     this.socket.on("webrtc-mediaStateChange", this.handleMediaStateChange);
-    //this.socket.on("webrtc-trackAdded", this.handleTrackAdded);
     this.socket.on("webrtc-roomFull", this.handleRoomFull);
   }
+  private handleStartCall = async (payload: IWebRTCStartCall) => {
+    const { chatRoomId, callId, userId } = payload;
+
+    await this.addActiveParticipants("new", callId, this.userId);
+    const participants = await this.getOtherParticipants(chatRoomId);
+
+    participants.forEach((memId) => this.socket.to(memId).emit("webrtc-incomingCall", payload));
+  };
+
+  private handleEndCall = async (payload: IWebRTCEndCall) => {
+    const { callId } = payload;
+
+    await this.removeActiveParticipants(callId, this.userId);
+    const participants = await this.getActiveParticipants(callId);
+
+    participants.forEach((memId) => this.socket.to(memId).emit("webrtc-endCall", payload));
+  };
+
+  private handleGetActiveParticipants = async (payload: IWebRTCGetActiveParticipants) => {
+    const { callId, chatRoomId } = payload;
+    await this.addActiveParticipants("existing", callId, this.userId);
+
+    const participants = await this.getActiveParticipants(callId);
+    participants.forEach((memId) => this.socket.to(memId).emit("webrtc-joinCall", payload));
+    this.socket.emit("webrtc-getActiveParticipants", {
+      ...payload,
+      activeParticipants: participants,
+    });
+  };
+  private handleOffer = async (payload: IWebRTCOffer) => {
+    const { callId } = payload;
+
+    const participants = await this.getActiveParticipants(callId);
+    participants.forEach((memId) =>
+      this.socket.to(memId).emit("webrtc-offer", { ...payload, userId: this.userId })
+    );
+  };
+  private handleAnswer = async (payload: IWebRTCAnswer) => {
+    const { callId } = payload;
+
+    const participants = await this.getActiveParticipants(callId);
+    participants.forEach((memId) =>
+      this.socket.to(memId).emit("webrtc-answer", { ...payload, userId: this.userId })
+    );
+  };
+  private handleIceCandidate = async (payload: IWebRTCIceCandidate) => {
+    const { callId } = payload;
+
+    const participants = await this.getActiveParticipants(callId);
+    participants.forEach((memId) =>
+      this.socket.to(memId).emit("webrtc-iceCandidate", { ...payload, userId: this.userId })
+    );
+  };
+  private handleMediaStateChange = async (payload: IWebRTCMediaStateChange) => {
+    const { callId } = payload;
+
+    const participants = await this.getActiveParticipants(callId);
+    participants.forEach((memId) =>
+      this.socket.to(memId).emit("webrtc-mediaStateChange", { ...payload, userId: this.userId })
+    );
+  };
+
+  private handleRoomFull = async () => {};
 
   private getOtherParticipants = async (chatRoomId: string) => {
     const chatRoom = await chatRoomService.getChatRoomByID(this.userId, chatRoomId);
@@ -75,7 +135,7 @@ export class SocketWebRTCService {
   private async getActiveParticipants(callId: string) {
     const participants = await this.redisClient.smembers(`call:${callId}:active_participants`);
 
-    if (!participants?.length) throw new Error("Participants is empty or not available");
+    if (!participants?.length) return [];
     return participants.filter((memId) => memId !== this.userId);
   }
   private async removeActiveParticipants(callId: string, userId: string) {
@@ -99,68 +159,4 @@ export class SocketWebRTCService {
 
     return { empty: false };
   }
-
-  private handleStartCall = async (data: IWebRTCStartCall) => {
-    const { chatRoomId, callId, userId } = data;
-
-    await this.addActiveParticipants("new", callId, this.userId);
-    const participants = await this.getOtherParticipants(chatRoomId);
-
-    participants.forEach((memId) => this.socket.to(memId).emit("webrtc-incomingCall", data));
-  };
-
-  private handleEndCall = async () => {};
-
-  private handleGetActiveParticipants = async (data: IWebRTCGetActiveParticipants) => {
-    const { callId, chatRoomId } = data;
-    await this.addActiveParticipants("existing", callId, this.userId);
-
-    const participants = await this.getActiveParticipants(callId);
-    console.log(participants);
-    participants.forEach((memId) => this.socket.to(memId).emit("webrtc-joinCall", data));
-    this.socket.emit("webrtc-getActiveParticipants", {
-      ...data,
-      activeParticipants: participants,
-    });
-  };
-  private handleOffer = async (data: IWebRTCOffer) => {
-    const { callId } = data;
-    console.log("offer", data);
-    const participants = await this.getActiveParticipants(callId);
-    participants.forEach((memId) =>
-      this.socket.to(memId).emit("webrtc-offer", { ...data, userId: this.userId })
-    );
-  };
-  private handleAnswer = async (data: IWebRTCAnswer) => {
-    const { callId } = data;
-    console.log("answer", data);
-    const participants = await this.getActiveParticipants(callId);
-    participants.forEach((memId) =>
-      this.socket.to(memId).emit("webrtc-answer", { ...data, userId: this.userId })
-    );
-  };
-  private handleIceCandidate = async (data: IWebRTCIceCandidate) => {
-    const { callId } = data;
-    const participants = await this.getActiveParticipants(callId);
-    participants.forEach((memId) =>
-      this.socket.to(memId).emit("webrtc-iceCandidate", { ...data, userId: this.userId })
-    );
-  };
-  private handleMediaStateChange = async (data: IWebRTCMediaStateChange) => {
-    const { callId } = data;
-    console.log("state media change ", data);
-    const participants = await this.getActiveParticipants(callId);
-    participants.forEach((memId) =>
-      this.socket.to(memId).emit("webrtc-mediaStateChange", { ...data, userId: this.userId })
-    );
-  };
-  private handleTrackAdded = async (data: IWebRTCMediaTrack) => {
-    const { callId } = data;
-    console.log("webrtc track added ", data);
-    const participants = await this.getActiveParticipants(callId);
-    participants.forEach((memId) =>
-      this.socket.to(memId).emit("webrtc-trackAdded", { ...data, userId: this.userId })
-    );
-  };
-  private handleRoomFull = async () => {};
 }
