@@ -69,7 +69,12 @@ export class SocketWebRTCService {
 
     const participants = await this.getOtherParticipants(callId);
     await this.removeActiveParticipants(this.userId);
-    participants.forEach((memberId) => this.socket.to(memberId).emit("webrtc-endCall", payload));
+    const promise = participants.map(async (memberId) => {
+      const destinationSocketid = await this.getSocketIdOfUser(memberId);
+      this.socket.to(destinationSocketid).emit("webrtc-endCall", payload);
+    });
+
+    await Promise.all(promise);
   };
 
   private handleGetActiveParticipants = async (payload: IWebRTCGetActiveParticipants) => {
@@ -77,14 +82,16 @@ export class SocketWebRTCService {
     await this.addActiveParticipants("existing", callId, this.userId);
 
     const participants = await this.getActiveParticipants(callId);
-    participants.forEach((memberId) =>
+    const promise = participants.map(async (memberId) => {
+      const destinationSocketid = await this.getSocketIdOfUser(memberId);
       this.socket
-        .to(memberId)
+        .to(destinationSocketid)
         .emit(
           "webrtc-joinCall",
           omit({ ...payload, from: this.userId, to: memberId }, "activeParticipants")
-        )
-    );
+        );
+    });
+    await Promise.all(promise);
     this.socket.emit("webrtc-getActiveParticipants", {
       ...payload,
       activeParticipants: participants,
@@ -108,8 +115,12 @@ export class SocketWebRTCService {
   };
   private handleMediaStateChange = async (payload: IWebRTCMediaStateChange) => {
     const { callId } = payload;
-    const destinationSocketid = await this.getSocketIdOfUser(payload.to);
-    this.socket.to(destinationSocketid).emit("webrtc-mediaStateChange", payload);
+    const participants = await this.getOtherParticipants(callId);
+    const promise = participants.map(async (memberId) => {
+      const destinationSocketid = await this.getSocketIdOfUser(memberId);
+      this.socket.to(destinationSocketid).emit("webrtc-mediaStateChange", payload);
+    });
+    await Promise.all(promise);
   };
 
   private handleRoomFull = async () => {};
