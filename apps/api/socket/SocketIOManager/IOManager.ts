@@ -5,6 +5,7 @@ import { SocketManager } from "./SocketManager";
 import { AppError, errToAppError } from "../../errors/AppError";
 import config from "config";
 import handleError from "../../errors/errorhandler/ErrorHandler";
+import { z } from "zod";
 
 export class IOManager {
   private io: Server;
@@ -23,7 +24,7 @@ export class IOManager {
 
   public on<K extends keyof ListenerSchema>(
     event: K,
-    callback: (payload: Zod.infer<ListenerSchema[K]>) => Promise<void>
+    callback: (payload: z.infer<ListenerSchema[K]>) => Promise<void>
   ) {
     const eventHandler = async (payload: any, ack: any) => {
       const result = ListenerSchema[event].safeParse(payload);
@@ -63,7 +64,7 @@ export class IOManager {
 
   public off<K extends keyof ListenerSchema>(
     event: K,
-    callback?: (payload: Zod.infer<ListenerSchema[K]>) => void
+    callback?: (payload: z.infer<ListenerSchema[K]>) => void
   ): void {
     if (callback) {
       this.io.off(event as string, callback);
@@ -79,7 +80,7 @@ export class IOManager {
 
   public once<K extends keyof ListenerSchema>(
     event: K,
-    callback: (payload: Zod.infer<ListenerSchema[K]>) => void
+    callback: (payload: z.infer<ListenerSchema[K]>) => void
   ) {
     const eventHandler = (payload: any, ack: any) => {
       const result = ListenerSchema[event].safeParse(payload);

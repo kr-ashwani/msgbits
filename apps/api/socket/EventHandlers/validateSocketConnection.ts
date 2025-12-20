@@ -1,11 +1,12 @@
 import { Socket } from "socket.io";
 import { ExtendedError } from "socket.io/dist/namespace";
-import cookie from "cookie";
+import * as cookie from "cookie";
 import { AppError, errToAppError } from "../../errors/AppError";
 import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import AuthorizationError from "../../errors/httperror/AuthorizationError";
 import { authService } from "../../service/database/auth/authService";
 import handleError from "../../errors/errorhandler/ErrorHandler";
+import SocketAuthError from "../../errors/httperror/SocketAuthError";
 
 export interface SocketAuthData {
   auth: {
@@ -45,6 +46,6 @@ export async function validateSocketConnection(
         )
       );
     } else if (err instanceof Error) handleError(errToAppError(err));
-    next(err);
+    next(new SocketAuthError("Authentication Error - Unable to authenticate socket connection."));
   }
 }

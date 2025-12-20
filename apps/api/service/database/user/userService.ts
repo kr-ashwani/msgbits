@@ -1,4 +1,4 @@
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { HydratedDocument, UpdateQuery } from "mongoose";
 import { UserInput } from "../../../schema/user/userSchema";
 import { IUser, userModelEvents } from "../../../model/user.model";

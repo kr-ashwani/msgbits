@@ -25,7 +25,7 @@ const myFormat = format((info) => {
   let colorizedMessage = `${level.toUpperCase()}: ${message}`;
 
   if (level === "error" && stack) {
-    const parsedStack = parseStack(stack);
+    const parsedStack = parseStack(stack as any);
     if (parsedStack)
       colorizedMessage += ` (${parsedStack.absoluteFilePath}:${parsedStack.lineNumber})`;
   }

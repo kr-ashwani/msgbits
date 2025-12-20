@@ -14,7 +14,7 @@ const myFormat = format((info) => {
   let errorMsg = `${timestamp} [pid:${process.pid}] ${level.toUpperCase()}: ${message}`;
 
   if (level === "error" && stack) {
-    const parsedStack = parseStack(stack);
+    const parsedStack = parseStack(stack as any);
     if (parsedStack) errorMsg += ` (${parsedStack.absoluteFilePath}:${parsedStack.lineNumber})`;
   }
 

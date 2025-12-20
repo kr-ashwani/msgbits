@@ -5,6 +5,7 @@ import { DefaultEventsMap } from "socket.io/dist/typed-events";
 import { AppError, errToAppError } from "../../errors/AppError";
 import DecoratorPermissionError from "../../errors/decoratorError.ts/DecoratorPermission";
 import handleError from "../../errors/errorhandler/ErrorHandler";
+import { z } from "zod";
 
 export class SocketManager {
   private socket: Socket<DefaultEventsMap, DefaultEventsMap, DefaultEventsMap, SocketAuthData>;
@@ -23,7 +24,7 @@ export class SocketManager {
 
   public on<K extends keyof ListenerSchema>(
     event: K,
-    callback: (payload: Zod.infer<ListenerSchema[K]>) => Promise<void>
+    callback: (payload: z.infer<ListenerSchema[K]>) => Promise<void>
   ) {
     const eventHandler = async (payload: any, ack: any) => {
       const result = ListenerSchema[event].safeParse(payload);
@@ -64,7 +65,7 @@ export class SocketManager {
 
   public off<K extends keyof ListenerSchema>(
     event: K,
-    callback?: (payload: Zod.infer<ListenerSchema[K]>) => void
+    callback?: (payload: z.infer<ListenerSchema[K]>) => void
   ): void {
     if (callback) {
       this.socket.off(event as string, callback);
@@ -98,7 +99,7 @@ export class SocketManager {
 
   public once<K extends keyof ListenerSchema>(
     event: K,
-    callback: (payload: Zod.infer<ListenerSchema[K]>) => void
+    callback: (payload: z.infer<ListenerSchema[K]>) => void
   ): void {
     this.socket.once(event as string, callback);
   }

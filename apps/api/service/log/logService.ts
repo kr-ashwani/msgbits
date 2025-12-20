@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 import { errToAppError } from "../../errors/AppError";
 import DbCollectionMissingError from "../../errors/parameterMissingError/DbCollectionMissingError";
-import LogSchema, { LogSchemaType } from "../../model/log.model";
+import LogSchema, { ILog } from "../../model/log.model";
 import handleError from "../../errors/errorhandler/ErrorHandler";
 
 interface dbLog {
-  log: Omit<LogSchemaType, "timestamp">;
+  log: Omit<ILog, "createdAt" | "updatedAt">;
   db?: string;
   collection?: string;
 }

@@ -7,7 +7,7 @@ import { resSchemaForModel } from "../../../schema/responseSchema";
 import { OTPSchema } from "../../../schema/user/OTPSchema";
 import { jwtService } from "../../jwt/JwtService";
 import { userService } from "../user/userService";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 class AuthService {
   async validateAuthTokenService(cookie: any) {

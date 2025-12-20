@@ -1,5 +1,5 @@
 import { Schema, UpdateQuery, model } from "mongoose";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { ArrayElement } from "../schema/types";
 import { createModelEvents } from "./events/modelEvents";
 import { ResponseUserSchema } from "../schema/responseSchema";
