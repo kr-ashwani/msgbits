@@ -1,47 +1,63 @@
-# Final Optimized Dockerfile
-
 FROM node:20.5.0-alpine AS builder
 
-# Set working directory
-WORKDIR /usr/src/app
+WORKDIR /repo
 
-# Copy package files
-COPY package*.json ./
+# Enable pnpm
+RUN corepack enable
+
+# Copy workspace files
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
+COPY apps/api/package.json apps/api/package.json
 
 # Install dependencies
-RUN npm ci
+RUN pnpm install --filter msgbits-api... --frozen-lockfile
 
-# Copy source files
-COPY . .
+# Copy backend source
+COPY apps/api ./apps/api
 
-RUN rm -rf .env*
+WORKDIR /repo/apps/api
 
-# Build the application
-RUN npm run build
+# Build with turbo
+RUN pnpm turbo build
 
-# Production stage
+
+#-------- deploy stage --------
+FROM node:20.5.0-alpine AS deploy
+
+WORKDIR /repo
+
+# Enable pnpm
+RUN corepack enable
+
+# Copy workspace files
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
+COPY apps/api/package.json apps/api/package.json
+
+# Copy built artifacts from builder
+COPY --from=builder /repo/apps/api/build ./apps/api/build
+COPY --from=builder /repo/apps/api/build/config ./apps/api/config
+
+# Use pnpm deploy to create pruned production dependencies
+RUN pnpm deploy --filter=msgbits-api --prod --legacy /app
+
+
+#-------- production --------
 FROM node:20.5.0-alpine
 
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy built assets from builder stage
-COPY --from=builder /usr/src/app/build ./build
-COPY --from=builder /usr/src/app/build/config ./config
-COPY --from=builder /usr/src/app/node_modules ./node_modules
-COPY --from=builder /usr/src/app/package*.json ./
+RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 
-# Set environment variables
+# Copy from deploy stage (already pruned with only production deps)
+COPY --from=deploy /app ./
+
+# Give nodejs user ownership of the entire app directory
+RUN chown -R nodejs:nodejs /app
+
 ENV NODE_ENV=production \
-    REDIS_PORT=6379 \
-    REDIS_HOST=redis
+    REDIS_HOST=redis \
+    REDIS_PORT=6379
 
-# Create a non-root user and switch to it
-RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001 && \
-    chown -R nodejs:nodejs /usr/src/app
 USER nodejs
-
-# Expose the port the app runs on
 EXPOSE 8080
-
-# Start the application
 CMD ["npm", "start"]

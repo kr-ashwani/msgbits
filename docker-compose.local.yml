@@ -1,0 +1,42 @@
+name: msgbits
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    image: msgbits-api:local
+    container_name: msgbits-api
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./apps/api/.env.local
+    environment:
+      NODE_ENV: development
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - redis
+    volumes:
+      - type: bind
+        source: ${HOME}/Developer/projects/msgbits/apps/api/encryptedFiles
+        target: /app/encryptedFiles
+    networks:
+      - app-network
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    image: msgbits-web:local
+    container_name: msgbits-web
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./apps/web/.env.local
+    environment:
+      NODE_ENV: development
+    depends_on:
+      - api
+    networks:
+      - app-network

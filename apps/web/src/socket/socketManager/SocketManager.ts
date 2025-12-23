@@ -2,6 +2,7 @@ import { toast } from "sonner";
 import { AckMessage, EmitterMapping, ListenerSchema } from "./types";
 import { Socket } from "socket.io-client";
 import { debug } from "@/utils/custom/debug";
+import * as Zod from "zod";
 
 export class SocketManager {
   private socket: Socket;

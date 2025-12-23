@@ -3,7 +3,9 @@
   "private": true,
   "packageManager": "pnpm@10.26.1",
   "scripts": {
-    "dev": "turbo dev",
+    "infra": "docker compose -f docker-compose.infra.yml up -d",
+    "infra:down": "docker compose -f docker-compose.infra.yml down",
+    "dev": "pnpm infra && turbo dev",
     "build": "turbo build",
     "lint": "turbo lint"
   },

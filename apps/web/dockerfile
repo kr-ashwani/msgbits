@@ -1,41 +1,60 @@
-# Build stage
 FROM node:20-alpine AS builder
-WORKDIR /app
+WORKDIR /repo
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+RUN corepack enable
+
+# Copy workspace configuration files
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
+COPY apps/web/package.json apps/web/package.json
 
 # Install dependencies
-RUN npm ci
+RUN pnpm install --filter msgbits-web... --frozen-lockfile
 
-# Copy the rest of the application code, including next.config.mjs
-COPY . .
+# Copy source code
+COPY apps/web ./apps/web
 
-# Build the Next.js app
-RUN npm run build
+WORKDIR /repo/apps/web
 
-RUN rm -f .env*
-RUN rm -f /app/.next/standalone/.env*
+# Build Next.js application
+RUN pnpm turbo build --filter=msgbits-web
 
-# Production stage
+
+# -------- production dependencies --------
+FROM node:20-alpine AS deps
+WORKDIR /repo
+
+RUN corepack enable
+
+# Copy workspace files
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
+COPY apps/web/package.json apps/web/package.json
+
+# Install production dependencies only
+RUN pnpm install --filter msgbits-web --prod --frozen-lockfile
+
+
+# -------- production runtime --------
 FROM node:20-alpine AS runner
 WORKDIR /app
 
-ENV NODE_ENV=production
-ENV PORT=3000
-ENV HOSTNAME="0.0.0.0"
+ENV NODE_ENV=production \
+    PORT=3000 \
+    HOSTNAME=0.0.0.0
 
-RUN addgroup --system --gid 1001 nodejs
-RUN adduser --system --uid 1001 nextjs
+# Create non-root user
+RUN addgroup -S nodejs -g 1001 && \
+    adduser -S -G nodejs -u 1001 nextjs
 
-# Copy necessary files from build stage
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-COPY --from=builder /app/next.config.mjs ./
+# Copy production dependencies
+COPY --from=deps --chown=nextjs:nodejs /repo/node_modules ./node_modules
+COPY --from=deps --chown=nextjs:nodejs /repo/apps/web/node_modules ./apps/web/node_modules
+
+# Copy Next.js build output
+COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/public ./apps/web/public
+COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/.next/static ./apps/web/.next/static
 
 USER nextjs
-
 EXPOSE 3000
 
-CMD ["node", "server.js"]
+CMD ["node", "apps/web/server.js"]

@@ -63,7 +63,19 @@ const AuthForm = (props: { AuthType: "Login" | "Signup" }) => {
       dispatch(setUser(response.payload.data));
     } else {
       //random profile pic link
-      const profilePicture = `https://avatar.iran.liara.run/public/${Math.random() > 0.5 ? "boy" : "girl"}?username=${data.name}`;
+      const styles = [
+        "identicon",
+        "bottts",
+        "pixel-art",
+        "adventurer",
+        "fun-emoji",
+        "initials",
+      ];
+
+      const style = styles[Math.floor(Math.random() * styles.length)];
+
+      const profilePicture = `https://api.dicebear.com/7.x/${style}/png?seed=${encodeURIComponent(data.name)}`;
+      //const profilePicture = `https://avatar.iran.liara.run/public/${Math.random() > 0.5 ? "boy" : "girl"}?username=${data.name}`;
       response = await fetchData("/signup", serverResWapperSchema(UserSchema), {
         ...data,
         profilePicture,

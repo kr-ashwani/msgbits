@@ -1,0 +1,12 @@
+node_modules
+.pnpm-store
+.git
+.gitignore
+apps/**/.env*
+apps/**/.next
+apps/**/build
+coverage
+dist
+
+# BUT allow env files inside apps/web
+!apps/web/.env*

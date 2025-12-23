@@ -1,0 +1,36 @@
+name: msgbits
+
+services:
+  api:
+    image: ${DOCKER_REPO}/api:${GITHUB_SHA}
+    container_name: msgbits-api
+    ports:
+      - "8080:8080"
+    env_file:
+      - ./apps/api/.env.production
+    environment:
+      NODE_ENV: production
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    depends_on:
+      - redis
+    volumes:
+      - type: bind
+        source: /var/lib/msgbits/encryptedFiles
+        target: /usr/src/app/encryptedFiles
+    networks:
+      - app-network
+
+  web:
+    image: ${DOCKER_REPO}/web:${GITHUB_SHA}
+    container_name: msgbits-web
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./apps/web/.env.production
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - backend
+    networks:
+      - app-network

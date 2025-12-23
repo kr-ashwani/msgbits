@@ -34,6 +34,11 @@ const nextConfig = {
         hostname: 'www.msgbits.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'api.dicebear.com',
+        pathname: '/**',
+      },
     ],
   },
   // headers: async () => {
