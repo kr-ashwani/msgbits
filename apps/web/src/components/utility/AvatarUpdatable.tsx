@@ -86,9 +86,11 @@ const AvatarUpdatable = ({
                       label.textContent = `${status.percentage}%`;
                   },
                 );
-                if (a.length && a[0].url !== "failed") {
-                  setSrc(a[0].url);
-                  if (onSrcUrlChange) onSrcUrlChange(a[0].url, a[0].fileId);
+                if (a.length && a[0]?.url !== "failed") {
+                  setSrc(a[0]?.url ?? "");
+
+                  if (onSrcUrlChange)
+                    onSrcUrlChange(a[0]?.url ?? "", a[0]?.fileId ?? "");
                 }
               } finally {
                 setLoading(false);

@@ -23,10 +23,10 @@ async function handleCredentialResponse(response: any, dispatch: AppDispatch) {
 
 function googleOAuth(dispatch: AppDispatch) {
   const globalThisVar = globalThis as any;
-  if (!globalThisVar?.google)
-    return toast.error(
-      "Authentication Error: Google OAuth initialization Failed",
-    );
+  if (!globalThisVar?.google) {
+    toast.error("Authentication Error: Google OAuth initialization Failed");
+    return;
+  }
   try {
     //initialize google OAuth
     globalThisVar.google.accounts.id.initialize({

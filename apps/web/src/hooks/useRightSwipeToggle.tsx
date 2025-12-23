@@ -32,7 +32,7 @@ const useRightSwipeToggle = (
         );
       }
 
-      startBuff = e.changedTouches[0].clientX - offsetX;
+      startBuff = e.changedTouches[0]?.clientX ?? 0 - offsetX;
       prevDis = startBuff;
       vel = 0;
 
@@ -44,11 +44,12 @@ const useRightSwipeToggle = (
       e.stopPropagation();
       if (!shouldMove) return;
       vel =
-        (e.touches[0].clientX - offsetX - prevDis) / (Date.now() - prevTime);
+        (e.touches[0]?.clientX ?? 0 - offsetX - prevDis) /
+        (Date.now() - prevTime);
       prevTime = Date.now();
-      prevDis = e.touches[0].clientX;
+      prevDis = e.touches[0]?.clientX ?? 0;
       translatePercent = Math.ceil(
-        ((e.touches[0].clientX - offsetX - startBuff) / width) * 100,
+        ((e.touches[0]?.clientX ?? 0 - offsetX - startBuff) / width) * 100,
       );
       // if (translatePercent < 0 || translatePercent > 100) return;
 
@@ -72,7 +73,8 @@ const useRightSwipeToggle = (
       e.stopPropagation();
       if (!shouldMove) return;
       translatePercent = Math.ceil(
-        ((e.changedTouches[0].clientX - offsetX - startBuff) / width) * 100,
+        ((e.changedTouches[0]?.clientX ?? 0 - offsetX - startBuff) / width) *
+          100,
       );
       translatePercent = translatePercent >= 50 ? 100 : 0;
 

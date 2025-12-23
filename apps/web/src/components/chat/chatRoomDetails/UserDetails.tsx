@@ -25,7 +25,7 @@ const UserDetails = ({ user }: { user: IUser }) => {
     const message = chatService.sendNewMessage("call", callType);
     if (message && message.length)
       callManager.startCall({
-        chatRoomId: message[0].chatRoomId,
+        chatRoomId: message[0]?.chatRoomId ?? "",
         callType,
       });
   }

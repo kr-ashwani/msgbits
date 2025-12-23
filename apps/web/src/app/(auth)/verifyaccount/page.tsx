@@ -22,10 +22,14 @@ const VerifyAccount = () => {
   const dispatch = useDispatch();
   async function verifOTP(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (otp.current.length !== 6)
-      return toast.error("Validation Error: OTP must be of six digits.");
-    if (!query.email)
-      return toast.error("Validation Error: Email address is missing.");
+    if (otp.current.length !== 6) {
+      toast.error("Validation Error: OTP must be of six digits.");
+      return;
+    }
+    if (!query.email) {
+      toast.error("Validation Error: Email address is missing.");
+      return;
+    }
     setIsLoading(true);
     const response = await fetchData(
       "/verifyaccount",
@@ -36,8 +40,10 @@ const VerifyAccount = () => {
       },
     );
     setIsLoading(false);
-    if (!response.success) return toast.error(response.error);
-
+    if (!response.success) {
+      toast.error(response.error);
+      return;
+    }
     toast.success(
       `${response.payload.data.name}, You have logged in successfully`,
     );

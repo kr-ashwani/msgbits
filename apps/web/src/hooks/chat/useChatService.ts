@@ -263,11 +263,15 @@ class ChatService {
     const chatRoom = this.chatRoom[chatRoomId];
     if (!chatRoom || chatRoom.type === "private" || !this.user) return;
     // user itself must be admin to perform this action
-    if (!chatRoom.admins.includes(this.user._id || ""))
-      return toast.error("User doesnot have privilege to remove another user");
+    if (!chatRoom.admins.includes(this.user._id || "")) {
+      toast.error("User doesnot have privilege to remove another user");
+      return;
+    }
 
-    if (chatRoom.createdBy === memberId)
-      return toast.error("You cannot remove group owner");
+    if (chatRoom.createdBy === memberId) {
+      toast.error("You cannot remove group owner");
+      return;
+    }
 
     const infoMsg = new InfoMessage(
       `${capitalizeStr(this.user.name)} removed ${capitalizeStr(memberName)}`,
@@ -291,13 +295,17 @@ class ChatService {
     const chatRoom = this.chatRoom[chatRoomId];
     if (!chatRoom || chatRoom.type === "private" || !this.user) return;
     // user itself must be admin to perform this action
-    if (!chatRoom.admins.includes(this.user?._id || ""))
-      return toast.error(
+    if (!chatRoom.admins.includes(this.user?._id || "")) {
+      toast.error(
         "User doesnot have privilege to demote another user to admin",
       );
+      return;
+    }
 
-    if (chatRoom.createdBy === memberId)
-      return toast.error("You cannot remove admin role from group owner");
+    if (chatRoom.createdBy === memberId) {
+      toast.error("You cannot remove admin role from group owner");
+      return;
+    }
 
     const infoMsg = new InfoMessage(
       `${capitalizeStr(this.user.name)} demoted ${capitalizeStr(memberName)} from admin`,
@@ -318,12 +326,16 @@ class ChatService {
     const chatRoom = this.chatRoom[chatRoomId];
     if (!chatRoom || chatRoom.type === "private" || !this.user) return;
     // user itself must be admin to perform this action
-    if (!chatRoom.admins.includes(this.user._id || ""))
-      return toast.error(
+    if (!chatRoom.admins.includes(this.user._id || "")) {
+      toast.error(
         "User doesnot have privilege to promote another user to admin",
       );
-    if (chatRoom.createdBy === memberId)
-      return toast.error("You cannot promote group owner to admin");
+      return;
+    }
+    if (chatRoom.createdBy === memberId) {
+      toast.error("You cannot promote group owner to admin");
+      return;
+    }
 
     const infoMsg = new InfoMessage(
       `${capitalizeStr(this.user.name)} made ${capitalizeStr(memberName)} admin`,

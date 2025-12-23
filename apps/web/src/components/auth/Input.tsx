@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { FieldValues, Path, UseFormRegister } from "react-hook-form";
 import Svg from "../svg";
@@ -9,8 +8,8 @@ const Input = function <T extends FieldValues>(props: {
   register: UseFormRegister<T>;
   className?: string;
 }) {
-  function capitalize(s: string) {
-    return s[0].toUpperCase() + s.slice(1);
+  function capitalize(s: string): string {
+    return s.charAt(0).toUpperCase() + s.slice(1);
   }
   return (
     <label

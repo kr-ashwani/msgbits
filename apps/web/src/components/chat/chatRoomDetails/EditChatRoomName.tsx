@@ -25,8 +25,8 @@ const EditChatRoomName = ({
     return () => clearTimeout(timeout);
   }, []);
 
-  function handleSubmit(type: "name", value: string) {
-    if (!rawChatRoom) return null;
+  function handleSubmit(_type: "name", value: string) {
+    if (!rawChatRoom) return;
     const updatedProfile = {
       chatRoomId: rawChatRoom.chatRoomId,
       updatedProfilePicture: null,

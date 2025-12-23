@@ -38,7 +38,7 @@ const ChatRoomDetailsInfo = ({
   if (!rawChatRoom) return null;
 
   function handleChatProfilePicChange(newUrl: string, fileId: string) {
-    if (!rawChatRoom) return null;
+    if (!rawChatRoom) return;
     const updatedProfile = {
       chatRoomId: rawChatRoom.chatRoomId,
       updatedProfilePicture: newUrl,
@@ -69,7 +69,7 @@ const ChatRoomDetailsInfo = ({
             <StatusAvatar
               onClick={() => imagePreviewDispatch.setImagePreview(userSrc)}
               indicatorClass="bottom-[1%] right-[18%] w-4 h-4"
-              userId={memberId}
+              userId={memberId ?? null}
               src={userSrc}
               size={120}
               className="cursor-pointer"

@@ -1,15 +1,26 @@
 {
   "name": "msgbits",
+  "version": "1.0.0",
   "private": true,
+  "type": "module",
+  "description": "MsgBits monorepo",
   "packageManager": "pnpm@10.26.1",
   "scripts": {
     "infra": "docker compose -f docker-compose.infra.yml up -d",
     "infra:down": "docker compose -f docker-compose.infra.yml down",
-    "dev": "pnpm infra && turbo dev",
+    "dev": "turbo dev",
     "build": "turbo build",
     "lint": "turbo lint"
   },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
   "devDependencies": {
-    "turbo": "^2.0.0"
+    "@types/node": "^25.0.3",
+    "tsup": "^8.5.1",
+    "tsx": "^4.21.0",
+    "turbo": "^2.0.0",
+    "typescript": "^5.9.3"
   }
 }

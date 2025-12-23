@@ -26,7 +26,10 @@ const ForgotPassword = () => {
       serverResWapperSchema(z.string()),
       data,
     );
-    if (!response.success) return toast.error(response.error);
+    if (!response.success) {
+      toast.error(response.error);
+      return;
+    }
     toast.success(
       `Password reset mail has been successfully sent to ${data.email}. Follow the instructions in the email to reset your password.`,
     );

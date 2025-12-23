@@ -17,7 +17,7 @@ export class ChatRoomCallSession {
 
   getCallInfo(chatRoomId: string) {
     for (let i = 0; i < this.activeChatRoomSession.length; i++)
-      if (chatRoomId === this.activeChatRoomSession[i].chatRoomId)
+      if (chatRoomId === this.activeChatRoomSession[i]?.chatRoomId)
         return this.activeChatRoomSession[i];
     return null;
   }

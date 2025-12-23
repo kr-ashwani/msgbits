@@ -42,9 +42,10 @@ const FilesPreviewFooter = () => {
       );
 
       fileMessagesArr.current = [];
-      files.forEach((file) =>
-        fileMessagesArr.current.push(fileMessages.current[file.fileId]),
-      );
+      files.forEach((file) => {
+        const fileMsg = fileMessages.current[file.fileId];
+        if (fileMsg) fileMessagesArr.current.push(fileMsg);
+      });
 
       setLoading(false);
     };
@@ -68,7 +69,10 @@ const FilesPreviewFooter = () => {
     updatedMessages?.forEach((msg) => {
       if (msg.type === "file") {
         const [file] = files.filter((elem) => elem.fileId === msg.file.fileId);
-        if (!file) toast.error("file to upload is missing");
+        if (!file) {
+          toast.error("file to upload is missing");
+          return;
+        }
 
         fileQueue.enqueue({
           file: file.file,
@@ -85,7 +89,7 @@ const FilesPreviewFooter = () => {
     setFiles([]);
   }
 
-  function handleDialogClose(state: boolean) {
+  function handleDialogClose(_state: boolean) {
     dispatch(setShowFileDiscardDialog(false));
   }
 

@@ -106,10 +106,10 @@ export class ChatRoomContainerState {
 
     for (let i = 0; i < chatRooms.length; i++) {
       const chatRoom = chatRooms[i];
-      if (chatRoom.type === "group") continue;
+      if (chatRoom?.type === "group") continue;
       if (
-        chatRoom.members.includes(memberId) &&
-        chatRoom.members.includes(userId)
+        chatRoom?.members.includes(memberId) &&
+        chatRoom?.members.includes(userId)
       )
         return chatRoom.chatRoomId;
     }
@@ -128,7 +128,7 @@ export class ChatRoomContainerState {
       const otherUserId = chatRoom.members.filter(
         (item) => item !== this.user?._id,
       );
-      const otherUser = this.chatUser.getUserById(otherUserId[0]);
+      const otherUser = this.chatUser.getUserById(otherUserId[0] ?? "");
 
       return otherUser ? otherUser.profilePicture : fallbackChatRoomImage;
     }
@@ -188,7 +188,7 @@ export class ChatRoomContainerState {
       const otherUserId = chatRoom.members.filter(
         (item) => item !== this.user?._id,
       );
-      const otherUser = this.chatUser.getUserById(otherUserId[0]);
+      const otherUser = this.chatUser.getUserById(otherUserId[0] ?? "");
 
       return otherUser ? otherUser.name : fallbackChatName;
     }

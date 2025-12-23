@@ -15,8 +15,8 @@ import { MessageSvg } from "@/components/svg/MessageSvg";
 
 export function FilesPreviewCarousel() {
   const [api, setApi] = React.useState<CarouselApi>();
-  const [current, setCurrent] = React.useState(0);
-  const [count, setCount] = React.useState(0);
+  const [_current, setCurrent] = React.useState(0);
+  const [_count, setCount] = React.useState(0);
 
   const { files, setFiles } = useFiles();
 
@@ -44,7 +44,7 @@ export function FilesPreviewCarousel() {
         className="max-h-[600px] w-[calc(100%-120px)] grow translate-x-[60px]"
       >
         <CarouselContent className="h-full">
-          {files.map((file, index) => (
+          {files.map((file, _index) => (
             <CarouselItem key={file.fileId}>
               <Card className="h-full border-none outline-none">
                 <CardContent className="relative flex h-full w-full items-center justify-center p-0">

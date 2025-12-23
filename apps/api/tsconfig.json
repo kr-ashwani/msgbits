@@ -1,24 +1,17 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-   "typeRoots": ["schema/types", "./node_modules/@types"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+
+    "noEmit": true,
+
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "types": ["node"],
-    "noEmitOnError": true,
-    "strict": true,
-    "module": "CommonJS",
-    "esModuleInterop": true,
-    "target": "ES2020",
-    "moduleResolution": "node",
-    "sourceMap": true,
-    "outDir": "build",
-    "resolveJsonModule": true,
-    "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": true,
+
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-
+    "emitDecoratorMetadata": true
   },
-  "lib": ["es2015"],
-  "include": ["./**/*.ts"],
-  "exclude": ["node_modules"]
+  "include": ["src/**/*", "config"]
 }
-

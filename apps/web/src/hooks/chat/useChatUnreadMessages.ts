@@ -9,7 +9,7 @@ export class ChatUnreadMessagesState {
     this.unreadMessages = unreadMessages;
   }
   getUnreadMessages = (chatRoomId: string): number => {
-    return this.unreadMessages[chatRoomId];
+    return this.unreadMessages[chatRoomId] ?? 0;
   };
 }
 const useChatUnreadMessages = () => {

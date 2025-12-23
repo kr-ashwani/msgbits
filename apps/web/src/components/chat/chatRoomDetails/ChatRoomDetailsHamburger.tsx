@@ -5,7 +5,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChatRoomState } from "@/hooks/AppSelector/useChatRoomState";
+//import { ChatRoomState } from "@/hooks/AppSelector/useChatRoomState";
 import { EllipsisVertical } from "lucide-react";
 import React from "react";
 

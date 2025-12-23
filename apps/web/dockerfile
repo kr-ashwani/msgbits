@@ -1,60 +1,65 @@
-FROM node:20-alpine AS builder
+# ---------- base ----------
+FROM node:20.5.0-alpine AS base
 WORKDIR /repo
-
 RUN corepack enable
 
-# Copy workspace configuration files
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
-COPY apps/web/package.json apps/web/package.json
 
-# Install dependencies
-RUN pnpm install --filter msgbits-web... --frozen-lockfile
-
-# Copy source code
-COPY apps/web ./apps/web
-
-WORKDIR /repo/apps/web
-
-# Build Next.js application
-RUN pnpm turbo build --filter=msgbits-web
-
-
-# -------- production dependencies --------
-FROM node:20-alpine AS deps
+# ---------- prune ----------
+FROM base AS prune
 WORKDIR /repo
 
-RUN corepack enable
-
-# Copy workspace files
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json ./
+# Copy minimal workspace files
+COPY pnpm-lock.yaml pnpm-workspace.yaml package.json turbo.json tsconfig.json ./
 COPY apps/web/package.json apps/web/package.json
 
-# Install production dependencies only
-RUN pnpm install --filter msgbits-web --prod --frozen-lockfile
+# Install deps needed for turbo prune
+RUN pnpm install --frozen-lockfile
+
+# Copy full repo for dependency graph
+COPY . .
+
+# Prune only web app
+RUN pnpm exec turbo prune --scope=@msgbits/web --docker
 
 
-# -------- production runtime --------
-FROM node:20-alpine AS runner
+# ---------- builder ----------
+FROM base AS builder
+WORKDIR /repo
+
+# Copy pruned manifests
+COPY --from=prune /repo/out/json/ ./
+COPY --from=prune /repo/out/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=prune /repo/tsconfig.json ./tsconfig.json
+
+# Install pruned deps only
+RUN pnpm install --frozen-lockfile
+
+# Copy pruned source
+COPY --from=prune /repo/out/full/ ./
+
+# Build Next.js app
+RUN pnpm exec turbo build --filter=@msgbits/web...
+
+
+# ---------- production ----------
+FROM node:20.5.0-alpine AS production
 WORKDIR /app
 
 ENV NODE_ENV=production \
     PORT=3000 \
     HOSTNAME=0.0.0.0
 
-# Create non-root user
+# Non-root user
 RUN addgroup -S nodejs -g 1001 && \
     adduser -S -G nodejs -u 1001 nextjs
 
-# Copy production dependencies
-COPY --from=deps --chown=nextjs:nodejs /repo/node_modules ./node_modules
-COPY --from=deps --chown=nextjs:nodejs /repo/apps/web/node_modules ./apps/web/node_modules
-
-# Copy Next.js build output
-COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/public ./apps/web/public
+# Copy standalone output from builder
 COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/.next/static ./apps/web/.next/static
+COPY --from=builder --chown=nextjs:nodejs /repo/apps/web/public ./apps/web/public
 
 USER nextjs
 EXPOSE 3000
 
+# Start Next.js standalone server
 CMD ["node", "apps/web/server.js"]

@@ -17,25 +17,25 @@ const getImageMetadata = async (
   });
 };
 
-const getVideoMetadata = async (
-  file: File,
-): Promise<{ width: number; height: number }> => {
-  return new Promise((resolve, reject) => {
-    const video = document.createElement("video");
-    video.preload = "metadata";
-    video.onloadedmetadata = () => {
-      window.URL.revokeObjectURL(video.src);
-      resolve({
-        width: video.videoWidth,
-        height: video.videoHeight,
-      });
-    };
-    video.onerror = () => {
-      reject(new Error("Failed to load video metadata"));
-    };
-    video.src = URL.createObjectURL(file as unknown as Blob);
-  });
-};
+// const getVideoMetadata = async (
+//   file: File,
+// ): Promise<{ width: number; height: number }> => {
+//   return new Promise((resolve, reject) => {
+//     const video = document.createElement("video");
+//     video.preload = "metadata";
+//     video.onloadedmetadata = () => {
+//       window.URL.revokeObjectURL(video.src);
+//       resolve({
+//         width: video.videoWidth,
+//         height: video.videoHeight,
+//       });
+//     };
+//     video.onerror = () => {
+//       reject(new Error("Failed to load video metadata"));
+//     };
+//     video.src = URL.createObjectURL(file as unknown as Blob);
+//   });
+// };
 
 // video will be served as document
 // only image will be shown as preview

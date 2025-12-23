@@ -1,5 +1,5 @@
 import { featuresContent } from "@/constant";
-import Image from "next/image";
+//import Image from "next/image";
 
 const Features = () => {
   return (

@@ -48,7 +48,7 @@ class SocketSyncService {
     this.socketState = socketState;
   }
 
-  listenForSyncInitiator = (payload: string) => {
+  listenForSyncInitiator = (_payload: string) => {
     const syncUpdate: SyncUpdateInput = {
       chatRoom: {},
       lastChatUserCreatedAt:

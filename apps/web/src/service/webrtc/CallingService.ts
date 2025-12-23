@@ -101,7 +101,8 @@ export class CallingService {
   }
 
   remoteTrackAddedCb(userId: string, streams: readonly MediaStream[]) {
-    this.remoteStreams.set(userId, streams[0]);
+    const stream = streams[0];
+    if (stream) this.remoteStreams.set(userId, stream);
     this.updateCallUI();
   }
 
@@ -296,7 +297,8 @@ export class CallingService {
   toggleVideo(): void {
     if (this.localStream) {
       const videoTrack = this.localStream.getVideoTracks()[0];
-      videoTrack.enabled = !videoTrack.enabled;
+      if (!videoTrack) return;
+      videoTrack.enabled = !videoTrack?.enabled;
       this.participants.get(this.localUser._id)!.videoEnabled =
         videoTrack.enabled;
 
@@ -317,6 +319,7 @@ export class CallingService {
   toggleAudio(): void {
     if (this.localStream) {
       const audioTrack = this.localStream.getAudioTracks()[0];
+      if (!audioTrack) return;
       audioTrack.enabled = !audioTrack.enabled;
       this.participants.get(this.localUser._id)!.audioEnabled =
         audioTrack.enabled;

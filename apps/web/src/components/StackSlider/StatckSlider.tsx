@@ -15,7 +15,7 @@ export const SLIDING_TIME = 300;
 const SLIDER_FNC = "cubic-bezier(0.12, 0.8, 0.32, 1)";
 
 export const StackSliderContext = React.createContext({
-  trigerSlider: (state: "open" | "close", sliderName?: string): void => {},
+  trigerSlider: (_state: "open" | "close", _sliderName?: string): void => {},
 });
 
 interface StackSliderProps {

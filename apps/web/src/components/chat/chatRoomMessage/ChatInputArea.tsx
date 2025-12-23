@@ -281,7 +281,9 @@ const ChatInputArea = () => {
           chatRoomId,
           // only last file will have repliedTo attached
           repliedTo:
-            i === filesToUpload.length - 1 ? repliedMsgState[chatRoomId] : "",
+            i === filesToUpload.length - 1
+              ? (repliedMsgState[chatRoomId] ?? "")
+              : "",
         }),
       );
 
@@ -320,7 +322,7 @@ const ChatInputArea = () => {
         const item = items[i];
 
         // Check if the item is a file (image)
-        if (item.kind === "file" && item.type.startsWith("image/")) {
+        if (item?.kind === "file" && item.type.startsWith("image/")) {
           const file = item.getAsFile();
           if (file) {
             fileArray.push(file); // Add file to array

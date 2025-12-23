@@ -17,7 +17,7 @@ const CallNotificationCard = ({
   const notificationCardRef = useRef<HTMLDivElement>(null);
   const callManager = useCallManager();
 
-  const { callId, callType, from } = callInfo;
+  const { callId, from } = callInfo;
 
   useEffect(() => {
     setTimeout(() => {
@@ -30,9 +30,6 @@ const CallNotificationCard = ({
 
   const chatRoomName = chatRoomContainerState.getChatRoomName(callId);
   const chatRoomPicture = chatRoomContainerState.getChatRoomPictureById(callId);
-  const chatRoomType = chatRoomContainerState
-    .getChatRoomById(callId)
-    .getChatType();
 
   async function handleCall(type: "Accept" | "Reject") {
     if (type === "Accept") {

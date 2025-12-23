@@ -45,7 +45,10 @@ const ResetPasswordComponent = () => {
         ...data,
       },
     );
-    if (!response.success) return toast.error(response.error);
+    if (!response.success) {
+      toast.error(response.error);
+      return;
+    }
     toast.success(`Password has been successfully changed. Please log in `);
   };
   return (

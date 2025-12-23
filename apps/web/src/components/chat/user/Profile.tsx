@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Slider from "@/components/utility/Slider";
-import Avatar from "@/components/utility/Avatar";
+//import Avatar from "@/components/utility/Avatar";
 import { useAppSelector } from "@/lib/store/hooks";
 import AnimatedInput from "@/components/utility/AnimatedInput";
 import { format } from "date-fns";

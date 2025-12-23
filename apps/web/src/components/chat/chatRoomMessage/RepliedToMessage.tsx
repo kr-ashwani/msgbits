@@ -9,7 +9,7 @@ function repliedMessageComp(
   messageState: MessageState | null,
   rawMessage: IMessage | null,
 ): React.ReactNode {
-  if (!rawMessage || !messageState) return null;
+  if (!rawMessage || !messageState) return <div></div>;
 
   if (rawMessage.type === "text")
     return (
@@ -26,6 +26,8 @@ function repliedMessageComp(
         </div>
       </div>
     );
+
+  return <div></div>;
 }
 
 function renderFileMessageLogo(fileMessage: IFileMessage): ReactNode {

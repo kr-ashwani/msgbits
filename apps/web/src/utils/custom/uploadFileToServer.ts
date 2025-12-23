@@ -32,14 +32,15 @@ export const uploadFileToServer = async (
   const fileUpload: Promise<FileUploaded>[] = [];
   fileMessages.forEach((fileMessage, i) => {
     const fileId = fileMessage.file.fileId;
-    fileQueue.enqueue({
-      fileId,
-      fileMessage,
-      file: files[i],
-    });
+    if (files[i])
+      fileQueue.enqueue({
+        fileId,
+        fileMessage,
+        file: files[i],
+      });
 
     fileUpload.push(
-      new Promise((res, rej) => {
+      new Promise((res, _rej) => {
         fileQueue.registerCallbackForFile(fileId, (uploadStatus) => {
           progressCallback(uploadStatus);
           if (uploadStatus.status === "UPLOADED")

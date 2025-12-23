@@ -31,7 +31,7 @@ const PrivateChatCreate = ({ name }: { name: string }) => {
             user.name.toLowerCase().includes(searchUser.toLowerCase()) ||
             user.email
               .split("@")[0]
-              .toLowerCase()
+              ?.toLowerCase()
               .includes(searchUser.toLowerCase())
           )
             acc.push(user);

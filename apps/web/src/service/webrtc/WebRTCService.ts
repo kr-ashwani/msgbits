@@ -120,7 +120,7 @@ export class WebRTCService {
   }
 
   closeAllConnections(): void {
-    for (const [userId, peerConnection] of this.peerConnections) {
+    for (const [_userId, peerConnection] of this.peerConnections) {
       peerConnection.close();
     }
     this.peerConnections.clear();

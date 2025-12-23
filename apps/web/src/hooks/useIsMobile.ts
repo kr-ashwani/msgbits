@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { debounce } from "lodash";
 
-const MOBILE_BREAKPOINT = 768;
+//const MOBILE_BREAKPOINT = 768;
 
 const isMobilePlatform = (): boolean => {
   if (typeof window === "undefined") return false; // Server-side rendering check
@@ -12,7 +12,7 @@ const isMobilePlatform = (): boolean => {
   const isMobileUA = mobileRegex.test(userAgent);
   const isTouchDevice =
     "ontouchstart" in window || navigator.maxTouchPoints > 0;
-  const isNarrowScreen = window.innerWidth < MOBILE_BREAKPOINT;
+  //const isNarrowScreen = window.innerWidth < MOBILE_BREAKPOINT;
 
   return isMobileUA || isTouchDevice;
 };

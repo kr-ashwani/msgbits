@@ -67,7 +67,7 @@ export class TextMessage extends Message implements ITextMessage {
     this.type = "text";
   }
 
-  toObject(): IMessage {
+  override toObject(): IMessage {
     return {
       type: this.type,
       ...super.toObject(),
@@ -88,7 +88,7 @@ export class InfoMessage extends Message implements IInfoMessage {
     this.type = "info";
   }
 
-  toObject(): IMessage {
+  override toObject(): IMessage {
     return {
       type: this.type,
       ...super.toObject(),
@@ -104,7 +104,7 @@ export class TimestampMessage extends Message implements IInfoMessage {
     this.type = "info";
   }
 
-  toObject(): IMessage {
+  override toObject(): IMessage {
     return {
       type: this.type,
       ...super.toObject(),
@@ -128,7 +128,7 @@ export class FileMessage extends Message implements IFileMessage {
     this.file = file;
   }
 
-  toObject(): IMessage {
+  override toObject(): IMessage {
     return {
       type: this.type,
       file: this.file,

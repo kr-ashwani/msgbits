@@ -76,9 +76,8 @@ export class FileQueue {
     fileId: string,
     callback: (status: FileUploadStatus) => void,
   ): void {
-    this.fileStatusCallbacks[fileId] = this.fileStatusCallbacks[fileId].filter(
-      (cb) => cb !== callback,
-    );
+    this.fileStatusCallbacks[fileId] =
+      this.fileStatusCallbacks[fileId]?.filter((cb) => cb !== callback) ?? [];
   }
   public unregisterAllCallbackForFile(fileId: string): void {
     delete this.fileStatusCallbacks[fileId];

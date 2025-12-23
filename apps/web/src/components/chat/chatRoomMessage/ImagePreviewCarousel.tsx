@@ -13,8 +13,8 @@ const ImagePreviewCarousel: React.FC<{
   imagePreview: ImagePreviewState;
 }> = ({ imagePreview }) => {
   const [api, setApi] = useState<CarouselApi>();
-  const [current, setCurrent] = useState(0);
-  const [count, setCount] = useState(0);
+  const [_current, setCurrent] = useState(0);
+  const [_count, setCount] = useState(0);
   const [isSwipeable, setIsSwipeable] = useState(true);
 
   useEffect(() => {

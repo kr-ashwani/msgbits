@@ -8,9 +8,10 @@ export function getCurrentTranslateX(element: HTMLElement) {
   // Parse the matrix to get the translateX value
   const matrixValues = matrix.match(/matrix.*\((.+)\)/);
   if (matrixValues) {
-    const values = matrixValues[1].split(", ");
+    const values = matrixValues[1]?.split(", ");
     // TranslateX is the fourth value in the matrix
-    const translateX = parseFloat(values[4]);
+    if (!values) return 0;
+    const translateX = parseFloat(values[4] ?? "0");
     return translateX;
   }
 

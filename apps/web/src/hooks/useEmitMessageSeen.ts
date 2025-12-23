@@ -22,18 +22,18 @@ export const useEmitMessageSeen = (
     if (!chatRoom) return;
     for (let i = msgArr.length - 1; i >= 0; i--) {
       const msg = msgArr[i];
-      const rawMsg = msg.getRawMessage();
+      const rawMsg = msg?.getRawMessage();
       if (!rawMsg) continue;
       if (chatRoom !== rawMsg.chatRoomId) continue;
 
-      if (msg.messageId === chatRoomLastDeliveredMsg.current[chatRoom]) break;
+      if (msg?.messageId === chatRoomLastDeliveredMsg.current[chatRoom]) break;
       // It should be other user's message
-      if (!msg.isMessageFromSelf()) {
-        if (!tempLastDeliveredMsg && msg.isMessageAlreadySeen())
+      if (!msg?.isMessageFromSelf()) {
+        if (!tempLastDeliveredMsg && msg?.isMessageAlreadySeen())
           tempLastDeliveredMsg = msg.messageId;
 
         emitMsgArr.push(rawMsg);
-        if (!tempLastDeliveredMsg) tempLastDeliveredMsg = msg.messageId;
+        if (!tempLastDeliveredMsg) tempLastDeliveredMsg = msg?.messageId ?? "";
       }
     }
     if (tempLastDeliveredMsg)

@@ -29,7 +29,7 @@ export class ChatTypingStatusState {
     const userName =
       this.user._id === member._id
         ? "You"
-        : capitalizeStr(member.name.split(" ")[0]);
+        : capitalizeStr(member.name.split(" ")[0] ?? "");
 
     return {
       userName,

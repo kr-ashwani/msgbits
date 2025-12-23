@@ -11,7 +11,6 @@ import { useImagePreviewDispatch } from "@/hooks/AppDispatcher/useImagePreviewDi
 
 const ChatRoom = ({
   chatRoomState,
-  index,
 }: {
   chatRoomState: ChatRoomState;
   index: number;
@@ -66,7 +65,7 @@ const ChatRoom = ({
         ) : (
           <StatusAvatar
             onClick={viewChatPicture}
-            userId={chatRoomState.getOtherUserIdInPrivateChat()}
+            userId={chatRoomState.getOtherUserIdInPrivateChat() ?? null}
             src={chatRoomState.getChatRoomPicture()}
             size={45}
           />

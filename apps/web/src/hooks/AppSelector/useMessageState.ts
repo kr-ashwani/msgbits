@@ -1,7 +1,7 @@
 import { chatRoomToMessageMapState } from "@/lib/store/features/chat/chatRoomToMessageMapSlice";
 import { messageState } from "@/lib/store/features/chat/messageSlice";
 import { useAppSelector } from "@/lib/store/hooks";
-import { use, useMemo } from "react";
+import { useMemo } from "react";
 import { formatTimeDifference } from "@/utils/custom/formatTimeDifference";
 import { ChatUserState, useChatUserState } from "./useChatUserState";
 import { IUser } from "@/schema/userSchema";

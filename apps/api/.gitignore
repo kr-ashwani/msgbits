@@ -8,3 +8,4 @@ node_modules
 logger/logs
 encryptedFiles
 build
+dist

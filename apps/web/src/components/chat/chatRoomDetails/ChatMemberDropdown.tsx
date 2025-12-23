@@ -84,7 +84,7 @@ const ChatMemberDropdown = ({
     setIsDialogOpen(true);
   }
 
-  function handleDialogClose(state: boolean) {
+  function handleDialogClose(_state: boolean) {
     setIsDialogOpen(false);
   }
 

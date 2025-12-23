@@ -1,6 +1,13 @@
 /** @type {import('next').NextConfig} */
 
 const nextConfig = {
+  // Transpile workspace packages
+  transpilePackages: [
+    '@msgbits/utils',
+    '@msgbits/config',
+    '@msgbits/types',
+  ],
+
   output: 'standalone',
   images: {
     remotePatterns: [

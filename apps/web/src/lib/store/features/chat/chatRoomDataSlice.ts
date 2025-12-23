@@ -70,7 +70,7 @@ export const chatRoomDataSlice = createSlice({
           state.newGroupMembers.push(member);
       });
     },
-    resetNewGroupMembers(state, action: PayloadAction<void>) {
+    resetNewGroupMembers(state, _action: PayloadAction<void>) {
       state.newGroupMembers = [];
     },
     changeTypingStatus(state, action: PayloadAction<ChatRoomAndMember>) {
@@ -103,7 +103,7 @@ export const chatRoomDataSlice = createSlice({
       }>,
     ) {
       Object.entries(action.payload.chatRoomMessages).forEach(
-        ([chatRoomId, message]) => {
+        ([_chatRoomId, message]) => {
           const userId = action.payload.userId;
           const msgArr: IMessage[] = Array.isArray(message)
             ? message
@@ -113,15 +113,15 @@ export const chatRoomDataSlice = createSlice({
           for (let i = msgArr.length - 1; i >= 0; i--) {
             const msg = msgArr[i];
             // if it's user itself message then exit
-            if (msg.senderId === userId) break;
+            if (msg?.senderId === userId) break;
             // if message is already seen by user then also exit
-            else if (msg.seenBy.includes(userId)) break;
+            else if (msg?.seenBy.includes(userId)) break;
             // if message is of info type then don't do anything
-            else if (msg.type === "info") continue;
+            else if (msg?.type === "info") continue;
             // user hasn't seen the message so mark it
             else
-              state.unreadMessages[msg.chatRoomId] =
-                (state.unreadMessages[msg.chatRoomId] ?? 0) + 1;
+              state.unreadMessages[msg?.chatRoomId ?? ""] =
+                (state.unreadMessages[msg?.chatRoomId ?? ""] ?? 0) + 1;
           }
         },
       );
@@ -178,7 +178,7 @@ export const chatRoomDataSlice = createSlice({
     addImagePreview(state, action: PayloadAction<ImagePreviewState>) {
       state.imagePreview = action.payload;
     },
-    resetImagePreview(state, action: PayloadAction<void>) {
+    resetImagePreview(state, _action: PayloadAction<void>) {
       state.imagePreview = {
         images: [],
         initialImageCursor: 0,

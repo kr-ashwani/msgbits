@@ -43,7 +43,7 @@ export class MessageDispatcher {
       );
   };
 
-  updateMessage = (payload: IMessage) => {};
+  updateMessage = (_payload: IMessage) => {};
 
   setMessagesOfChatRoom = (payload: Record<string, IMessage[]>) => {
     if (!Object.keys(payload).length) return;

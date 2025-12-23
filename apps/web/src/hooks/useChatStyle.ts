@@ -5,9 +5,9 @@ import { useEffect } from "react";
  */
 const useChatStyle = () => {
   useEffect(() => {
-    document.getElementsByTagName("body")[0].classList.add("chatStyle");
+    document.getElementsByTagName("body")[0]?.classList.add("chatStyle");
     return () => {
-      document.getElementsByTagName("body")[0].classList.remove("chatStyle");
+      document.getElementsByTagName("body")[0]?.classList.remove("chatStyle");
     };
   }, []);
 };

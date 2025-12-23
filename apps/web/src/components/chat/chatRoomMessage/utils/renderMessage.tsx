@@ -164,7 +164,7 @@ const updateMsgStatus = (
 
   const entries = Object.entries(obj);
   for (let i = 0; i < entries.length; i++) {
-    const [key, value] = entries[i];
+    const [key, value] = entries[i] as [Status, keyof MsgStatus];
     if (key === status) {
       msgStatus.current[value] = messageId;
       break;

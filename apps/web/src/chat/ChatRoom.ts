@@ -53,7 +53,7 @@ export class PrivateChatRoom extends ChatRoom implements IPrivateChatRoom {
     this.type = "private";
   }
 
-  toObject(): IChatRoom {
+  override toObject(): IChatRoom {
     return {
       type: this.type,
       ...super.toObject(),
@@ -83,7 +83,7 @@ export class GroupChatRoom extends ChatRoom implements IGroupChatRoom {
     this.chatName = chatName;
   }
 
-  toObject(): IChatRoom {
+  override toObject(): IChatRoom {
     return {
       type: this.type,
       chatName: this.chatName,

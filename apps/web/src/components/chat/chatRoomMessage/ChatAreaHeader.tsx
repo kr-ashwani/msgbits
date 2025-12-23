@@ -32,17 +32,17 @@ function getChatMembersPictures(chatRoom: ChatRoomState) {
       chatRoom.getChatType() === "group" ? (
         <Avatar
           className="relative ml-[-12px]"
-          key={user._id}
-          src={user.profilePicture}
+          key={user?._id}
+          src={user?.profilePicture ?? ""}
           size={35}
         />
       ) : (
         <StatusAvatar
-          userId={user._id}
+          userId={user?._id ?? ""}
           className="relative ml-[-12px]"
           indicatorClass="right-[5%]"
-          key={user._id}
-          src={user.profilePicture}
+          key={user?._id}
+          src={user?.profilePicture ?? ""}
           size={35}
         />
       ),

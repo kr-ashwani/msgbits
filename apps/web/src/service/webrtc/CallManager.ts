@@ -106,7 +106,7 @@ export class CallManager {
   addUser(): void {}
 
   @requiresCallSession()
-  removeUser(userId: string): void {}
+  removeUser(_userId: string): void {}
 
   isInCall(): boolean {
     return this.callingService !== null;

@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useState } from "react";
 import Avatar from "@/components/utility/Avatar";
 import { IUser } from "@/schema/userSchema";
 import { ChatRoomState } from "@/hooks/AppSelector/useChatRoomState";

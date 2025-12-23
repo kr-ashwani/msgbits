@@ -3,7 +3,6 @@ import { FileUploadStatus, UploadFile } from "./types";
 import { FileSchema, IFile } from "@/schema/FileSchema";
 import { serverResWapperSchema } from "@/schema/ServerResWrapperSchema";
 import { fetchData } from "@/utils/custom/customFetch";
-import { z } from "zod";
 
 export class FileProcess {
   private readonly baseURL: URL;

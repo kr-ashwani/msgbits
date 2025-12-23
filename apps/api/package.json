@@ -1,19 +1,21 @@
 {
-  "name": "msgbits-api",
+  "name": "@msgbits/api",
   "version": "1.0.0",
-  "main": "index.js",
+  "type": "module",
+  "description": "MsgBits API Server",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc && npm run copyBuildFiles",
-    "copyBuildFiles": "ts-node ./utils/copyBuildFiles.ts",
+    "build": "tsup src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "ts-node-dev --files --respawn ./app.ts",
-    "start": "node ./build/app.js"
+    "dev": "tsup src/index.ts --watch --onSuccess \"node --inspect dist/index.js\"",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
   "dependencies": {
+    "@msgbits/utils": "workspace:^1.0.0",
     "@aws-sdk/client-s3": "^3.667.0",
     "@aws-sdk/lib-storage": "^3.667.0",
     "@socket.io/admin-ui": "^0.5.1",

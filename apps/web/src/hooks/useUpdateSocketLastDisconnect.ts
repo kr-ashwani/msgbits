@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useSocket } from "./useSocket";
-import { useAppDispatch, useAppSelector } from "@/lib/store/hooks";
+import { useAppDispatch } from "@/lib/store/hooks";
 import { updateSocketLastDisconectedTime } from "@/lib/store/features/socket/socketSlice";
 
 export function useUpdateSocketLastDisconnect() {

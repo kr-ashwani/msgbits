@@ -1,0 +1,4 @@
+module.exports = {
+  MONGODB_URI: process.env.MONGODB_URI_PROD,
+  REFRESH_TOKEN_SECRET_KEY: process.env.REFRESH_TOKEN_SECRET_KEY_PROD,
+};

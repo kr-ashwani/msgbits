@@ -1,5 +1,5 @@
 {
-  "name": "msgbits-web",
+  "name": "@msgbits/web",
   "version": "0.1.0",
   "private": true,
   "scripts": {

@@ -7,16 +7,14 @@ import { useMemo } from "react";
 export class NewGroupMembersState {
   private newGroupMembersState;
   private chatUser;
-  private user;
 
   constructor(
     newGroupMembersState: newGroupMembersState,
     chatUser: chatUserState,
-    user: IUser | null,
+    _user: IUser | null,
   ) {
     this.newGroupMembersState = newGroupMembersState;
     this.chatUser = chatUser;
-    this.user = user;
   }
   getMembersId(): string[] {
     return this.newGroupMembersState;

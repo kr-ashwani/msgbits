@@ -9,7 +9,7 @@ import GroupChatNewMembers from "./GroupChatNewMembers";
 import { useChatService } from "@/hooks/chat/useChatService";
 import Slider from "../../utility/Slider";
 import { toast } from "@/utils/toast/Toast";
-import { uploadFileToServer } from "@/utils/custom/uploadFileToServer";
+//import { uploadFileToServer } from "@/utils/custom/uploadFileToServer";
 
 const DefaultUrl = "/assets/groupChat.png";
 const GroupChatFinalCreate = ({
@@ -41,12 +41,18 @@ const GroupChatFinalCreate = ({
 
     const members = newGroup.members.map((memb) => memb._id);
 
-    if (!members.length)
-      return toast.error("Group must have atleast one member");
-    if (!newGroup.name.trim())
-      return toast.error("Group must have a valid name");
-    if (!chatRoomPicture)
-      return toast.error("Group must have a valid chat room picture");
+    if (!members.length) {
+      toast.error("Group must have atleast one member");
+      return;
+    }
+    if (!newGroup.name.trim()) {
+      toast.error("Group must have a valid name");
+      return;
+    }
+    if (!chatRoomPicture) {
+      toast.error("Group must have a valid chat room picture");
+      return;
+    }
 
     chatService.createNewGroupChat({
       chatName: newGroup.name.trim(),
@@ -63,10 +69,10 @@ const GroupChatFinalCreate = ({
     }));
   }
 
-  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    if (!e.target.files) return;
-    await uploadFileToServer(Array.from(e.target.files));
-  }
+  // async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  //   if (!e.target.files) return;
+  //   await uploadFileToServer(Array.from(e.target.files));
+  // }
   return (
     <Slider
       heading="Group Description"
