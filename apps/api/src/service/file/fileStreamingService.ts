@@ -7,6 +7,7 @@ import busboy from "busboy";
 import { fileService } from "../database/chat/file/fileService";
 import { LocalStorageProvider, S3StorageProvider, StorageProvider } from "./StorageProvideService";
 import { EventEmitter } from "events";
+import path from "path";
 
 // Increase the default max listeners
 EventEmitter.defaultMaxListeners = 20;
@@ -44,10 +45,11 @@ class FileStreamingService {
     this.algorithm = config.algorithm || "aes-256-cbc";
     this.blockSize = config.blockSize || 16;
     FileStreamingService.ivSize = config.ivSize || 16;
+    const defaultStoragePath = path.join(process.cwd(), "encryptedFiles");
     this.storageProvider =
       config.uploadToS3 && config.s3Bucket
         ? new S3StorageProvider(config.s3Bucket)
-        : new LocalStorageProvider(config.localStoragePath || "./encryptedFiles");
+        : new LocalStorageProvider(config.localStoragePath || defaultStoragePath);
   }
 
   async processFileAndEncrypt(req: express.Request, res: express.Response) {

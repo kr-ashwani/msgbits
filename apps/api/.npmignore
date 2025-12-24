@@ -1,0 +1,30 @@
+# apps/api/.npmignore
+
+# Source files
+src/
+*.ts
+!*.d.ts
+
+# Config files
+tsconfig.json
+tsup.config.ts
+
+# Build artifacts
+.turbo/
+
+# Documentation
+README.md
+
+# Docker
+dockerfile
+.dockerignore
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Encrypted files (if not needed at runtime)
+encryptedFiles/
