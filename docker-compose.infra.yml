@@ -9,4 +9,4 @@ services:
       - redis_stack_data:/data
 
 volumes:
-  redis_data:
+  redis_stack_data:
