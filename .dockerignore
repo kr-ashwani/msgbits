@@ -5,8 +5,17 @@ node_modules
 apps/**/.env*
 apps/**/.next
 apps/**/build
+apps/**/dist
+apps/**/node_modules
+packages/**/.env*
+packages/**/node_modules
+packages/**/build
+packages/**/dist
 coverage
-dist
 
-# BUT allow env files inside apps/web
+/dist
+
+# Exceptions
 !apps/web/.env*
+!apps/api/public
+!apps/api/public/**/dist
