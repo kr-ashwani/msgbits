@@ -7,10 +7,12 @@ import { useSetUpSocketListners } from "@/hooks/useSetUpSocketListners";
 import StartUpSetup from "@/components/utility/StartUpSetup";
 import ImagePreviewDrawer from "@/components/chat/chatRoomMessage/ImagePreviewDrawer";
 import CallContainer from "@/components/chat/chatCall/CallContainer";
+import { useTokenAutoRefresh } from "@/hooks/useTokenAutoRefresh";
 
 const Chat = () => {
   useChatStyle();
   useSetUpSocketListners();
+  useTokenAutoRefresh();
 
   return (
     <main

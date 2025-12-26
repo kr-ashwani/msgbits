@@ -8,14 +8,39 @@ import { OTPSchema } from "../../../schema/user/OTPSchema";
 import { jwtService } from "../../jwt/JwtService";
 import { userService } from "../user/userService";
 import bcrypt from "bcryptjs";
+import { JwtPayload } from "jsonwebtoken";
+
+export type userJWTPayload = {
+  name: string;
+  email: string;
+  createdAt: Date;
+} & JwtPayload;
 
 class AuthService {
-  async validateAuthTokenService(cookie: any) {
+  createAccessToken(payload: userJWTPayload) {
+    return jwtService.createAccessToken(payload);
+  }
+  createRefreshToken(payload: userJWTPayload) {
+    return jwtService.createRefreshToken(payload);
+  }
+  async validateRefreshToken(cookie: any) {
     try {
       if (!(cookie && cookie._auth_token))
         throw new AuthenticationError("Auth token in cookies is missing");
 
-      const jwtPayload = jwtService.verifyToken(String(cookie._auth_token));
+      const jwtPayload = jwtService.verifyRefreshToken(String(cookie._auth_token));
+      if (!jwtPayload) throw new AuthenticationError("Auth token is tampered");
+
+      const user = await userService.findUserByEmail({ email: jwtPayload.email });
+
+      return { user, jwtPayload };
+    } catch (err) {
+      throw err;
+    }
+  }
+  async validateAccessToken(token: string) {
+    try {
+      const jwtPayload = jwtService.verifyAccessToken(token);
       if (!jwtPayload) throw new AuthenticationError("Auth token is tampered");
 
       const user = await userService.findUserByEmail({ email: jwtPayload.email });

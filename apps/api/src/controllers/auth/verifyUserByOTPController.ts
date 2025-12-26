@@ -7,7 +7,7 @@ async function verifyUserByOTPController(req: Request, res: Response) {
   const user = await authService.verifyOTPService(req.body);
   userService.emitNewVerifiedUserCreated(user);
   const clientRes = new ClientResponse(res);
-  clientRes.sendJWTToken(user);
+  clientRes.sendJWTRefreshToken(user);
   clientRes.send("OK", clientRes.createSuccessObj("User successfully verified OTP.", user));
 }
 

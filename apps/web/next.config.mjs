@@ -12,6 +12,11 @@ const nextConfig = {
   images: {
     remotePatterns: [
       {
+        protocol: 'http',
+        hostname: '192.168.29.55:8080',
+        pathname: '/**',
+      },
+      {
         protocol: 'https',
         hostname: 'avatar.iran.liara.run',
         pathname: '/**',

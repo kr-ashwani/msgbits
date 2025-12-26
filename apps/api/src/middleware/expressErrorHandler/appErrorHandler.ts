@@ -11,14 +11,11 @@ const AppErrorErrorHandler = (err: Error, req: Request, res: Response, next: Nex
   if (err instanceof AppError) {
     const clientRes = new ClientResponse(res);
     if (err instanceof AuthenticationError)
-      clientRes.send("Bad Request", clientRes.createErrorObj("Authentication Error", err.message));
+      clientRes.send("Unauthorized", clientRes.createErrorObj("Authentication Error", err.message));
     else if (err instanceof AuthorizationError)
-      clientRes.send("Bad Request", clientRes.createErrorObj("Authorization Error", err.message));
+      clientRes.send("Forbidden", clientRes.createErrorObj("Authorization Error", err.message));
     else if (err instanceof InsufficientRoleError)
-      clientRes.send(
-        "Bad Request",
-        clientRes.createErrorObj("Insufficient Role Error", err.message)
-      );
+      clientRes.send("Forbidden", clientRes.createErrorObj("Insufficient Role Error", err.message));
     else if (err instanceof EmailVerificationError)
       clientRes.send(
         "Bad Request",

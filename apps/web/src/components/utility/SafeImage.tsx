@@ -7,6 +7,7 @@ import {
 import { useLayoutEffect, useState } from "react";
 import { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { cn } from "@/lib/utils";
+import { useAppSelector } from "@/lib/store/hooks";
 
 interface SafeImageProps extends Omit<ImageProps, "src"> {
   src: string | StaticImport;
@@ -32,6 +33,8 @@ export function SafeImage({
 
   const validatedSrc = validateImageUrl(src, fallbackSrc);
   const displaySrc = imageState.imageError ? fallbackSrc : validatedSrc;
+  const accessToken = useAppSelector((state) => state.auth.token.accessToken);
+  const imageSrc = getImageUrl(displaySrc.toString(), accessToken);
 
   useLayoutEffect(() => {
     setImageState({
@@ -42,7 +45,7 @@ export function SafeImage({
 
   return (
     <Image
-      src={displaySrc}
+      src={imageSrc}
       alt={alt}
       className={cn(
         "object-contain",
@@ -62,4 +65,22 @@ export function SafeImage({
       {...props}
     />
   );
+}
+
+function getImageUrl(url: string | StaticImport, accessToken: string) {
+  let originalUrl = decodeURIComponent(url.toString());
+
+  if (originalUrl.startsWith("/")) return originalUrl;
+
+  // Secure domain detection using hostname match
+  const SECURE_DOMAIN = new URL(process.env.NEXT_PUBLIC_SERVER_URL!).hostname;
+  const reqDomain = new URL(originalUrl).hostname;
+
+  // if its public domain, return original url
+  if (reqDomain !== SECURE_DOMAIN) return originalUrl;
+
+  // Append access token for secure domains
+  const finalImageUrl = new URL(originalUrl);
+  finalImageUrl.searchParams.set("token", accessToken);
+  return finalImageUrl.toString();
 }

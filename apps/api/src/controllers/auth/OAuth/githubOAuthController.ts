@@ -9,7 +9,7 @@ export const githubOAuthController = async (req: Request, res: Response) => {
     const query = typeof req.query.code === "string" ? req.query.code : "";
     const oauthUserInfo = await oauthProviderService.getGithubUserDetail(query);
     const user = await oauthService.createOAuthUser(oauthUserInfo, "GithubOAuth");
-    clientRes.sendJWTToken(user);
+    clientRes.sendJWTRefreshToken(user);
     clientRes.redirectToAuthURL("success=true&message=User is verified");
   } catch (err) {
     clientRes.redirectToAuthURL("success=false&error=github OAuth failed.Try again");

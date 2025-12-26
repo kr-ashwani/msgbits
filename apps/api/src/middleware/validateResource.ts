@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { AnyZodObject } from "zod";
 
 /**
- * validates schema for incomming request
+ * validates schema for incoming request
  * @param schema AnyZodObject
  * @returns void
  */

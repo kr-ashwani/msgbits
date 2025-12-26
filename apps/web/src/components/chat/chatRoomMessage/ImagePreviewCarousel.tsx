@@ -5,6 +5,8 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselPrevious,
+  CarouselNext,
 } from "@/components/ui/carousel";
 import ZoomableImageCard from "./ZoomableImageCard";
 import { ImagePreviewState } from "@/lib/store/features/chat/chatRoomDataSlice";
@@ -47,10 +49,10 @@ const ImagePreviewCarousel: React.FC<{
   }, []);
 
   return (
-    <div className="flex grow flex-col justify-center overflow-hidden py-7">
+    <div className="flex grow flex-col items-center justify-center overflow-hidden py-7">
       <Carousel
         setApi={setApi}
-        className="max-h-[600px] w-[calc(100%-10px)] grow translate-x-[5px] snap-none"
+        className="max-h-[600px] w-[calc(100%-10px)] max-w-5xl grow translate-x-[5px] snap-none"
         opts={{ watchDrag: isSwipeable }}
       >
         <CarouselContent className="h-full">
@@ -65,6 +67,8 @@ const ImagePreviewCarousel: React.FC<{
             </CarouselItem>
           ))}
         </CarouselContent>
+        <CarouselPrevious className="ml-16 scale-110 md:ml-20 md:scale-150" />
+        <CarouselNext className="mr-16 scale-110 md:mr-20 md:scale-150" />
       </Carousel>
     </div>
   );

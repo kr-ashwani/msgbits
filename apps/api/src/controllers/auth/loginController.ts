@@ -5,7 +5,7 @@ import { ClientResponse } from "../../utils/clientResponse";
 async function loginController(req: Request, res: Response) {
   const user = await userService.findAndValidateUser(req.body);
   const clientRes = new ClientResponse(res);
-  clientRes.sendJWTToken(user);
+  clientRes.sendJWTRefreshToken(user);
   clientRes.send("OK", clientRes.createSuccessObj("User logged in successfully.", user));
 }
 

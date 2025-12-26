@@ -25,7 +25,7 @@ export async function validateSocketConnection(
   try {
     const authCookie = cookie.parse(socket.handshake.headers.cookie || "");
 
-    const { user } = await authService.validateAuthTokenService(authCookie);
+    const { user } = await authService.validateRefreshToken(authCookie);
     // set auth detail to socket
     socket.data.auth = {
       id: user._id.toString(),

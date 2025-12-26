@@ -1,7 +1,7 @@
 import config from "config";
 import { Response } from "express";
-import { jwtService, userJWTPayload } from "../../service/jwt/JwtService";
 import { ErrorCode } from "./types";
+import { authService, userJWTPayload } from "../../service/database/auth/authService";
 
 //Client will receive ClientResponseSuccess schema on successfull response
 interface ClientResponseSuccess<T> {
@@ -99,10 +99,10 @@ class ClientResponse {
 
     this.res.status(httpCode).json(resObj);
   }
-  sendJWTToken(payload: userJWTPayload) {
+  sendJWTRefreshToken(payload: userJWTPayload) {
     // refresh_exp_time is in seconds but maxAge accepsts millisecods
     const refresh_exp_time = config.get<number>("REFRESH_TOKEN_EXP_TIME");
-    const jwtToken = jwtService.createToken({
+    const jwtToken = authService.createRefreshToken({
       name: payload.name,
       email: payload.email,
       createdAt: payload.createdAt,

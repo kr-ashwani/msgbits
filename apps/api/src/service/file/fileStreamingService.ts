@@ -110,7 +110,15 @@ class FileStreamingService {
       const iv = await this.readIV(fileId);
       const actualFileSize = encryptedFileSize - FileStreamingService.ivSize;
 
-      res.setHeader("Content-Disposition", `inline; filename="${metadata.fileName}"`);
+      const name = metadata.fileName;
+      // 1. Encode for browsers (handles unicode + emojis + spaces safely)
+      const encoded = encodeURIComponent(name);
+      // 2. Safe fallback for OS constraints
+      const fallback = name.replace(/[^a-zA-Z0-9._()-]/g, "_");
+      res.setHeader(
+        "Content-Disposition",
+        `inline; filename*=UTF-8''${encoded}; filename="${fallback}"`
+      );
       res.setHeader("Content-Type", metadata.fileType || "application/octet-stream");
 
       const range = req.headers.range;

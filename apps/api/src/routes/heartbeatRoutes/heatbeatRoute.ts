@@ -1,12 +1,7 @@
 import express, { Router } from "express";
 import heartbeatController from "../../controllers/heartbeat/heartbeatController";
-import asyncWrapper from "../../middleware/asyncWrapper";
-import validateUserAndRefreshToken from "../../middleware/validateUserAndRefreshToken";
-
 const heartbeatRouter: Router = express.Router();
 
-heartbeatRouter
-  .route("/heartbeat")
-  .get(asyncWrapper(validateUserAndRefreshToken), heartbeatController);
+heartbeatRouter.route("/heartbeat").get(heartbeatController);
 
 export default heartbeatRouter;
