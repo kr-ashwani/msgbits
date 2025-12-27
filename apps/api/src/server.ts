@@ -23,12 +23,13 @@ import {
   validateSocketConnection,
 } from "./socket/EventHandlers/validateSocketConnection";
 import { DefaultEventsMap } from "socket.io";
-import "./model/role.model";
+import "./model/userRole.model";
 import validateUserAndRefreshToken from "./middleware/validateUserAndRefreshToken";
 import { SocketService } from "./service/socket/SocketService";
 import { AdminSocketService } from "./service/socket/admin/AdminSocketService";
 import { IOService } from "./service/socket/IOService";
 import helmet from "helmet";
+import { seedAdmin } from "./config/seedAdmin";
 
 class App {
   private readonly app;
@@ -147,9 +148,10 @@ class App {
 
   // app handler will be called by public function run when express
   // app will bind port number
-  private appHandler() {
+  private async appHandler() {
     logger.info(`Server is running at http://localhost:${App.PORT}`);
     dbConnection();
+    await seedAdmin();
     RedisPubSub.getInstance();
 
     swaggerDocs(this.app, App.PORT);

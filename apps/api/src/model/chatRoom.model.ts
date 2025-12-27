@@ -88,6 +88,13 @@ const chatRoomSchema = new Schema<IChatRoom>(
   }
 );
 
+// ----------------------- Indexes -----------------------
+chatRoomSchema.index({ members: 1 }); // get all rooms user is part of
+chatRoomSchema.index({ type: 1 }); // filter private/group fast
+chatRoomSchema.index({ lastMessageId: 1 }); // useful for room list preview
+chatRoomSchema.index({ createdBy: 1 }); // fast lookup of rooms created by a user
+chatRoomSchema.index({ createdAt: -1 }); // show newest rooms first
+
 const ChatRoomModel = model<IChatRoom>("ChatRoom", chatRoomSchema);
 
 export default ChatRoomModel;

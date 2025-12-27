@@ -1,5 +1,5 @@
 import { HydratedDocument } from "mongoose";
-import { IRole } from "../../model/role.model";
+import { IRole } from "../../model/userRole.model";
 import { RowMapper } from "./RowMapper";
 
 class RoleRowMapper extends RowMapper<HydratedDocument<IRole>> {

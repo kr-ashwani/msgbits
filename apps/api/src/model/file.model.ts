@@ -62,6 +62,11 @@ const fileSchema = new Schema<IFile>(
   }
 );
 
+//---------------------- Indexes -----------------------
+fileSchema.index({ createdAt: -1 }); // get recent uploads quickly
+fileSchema.index({ extension: 1 }); // search by file extension
+fileSchema.index({ size: 1 }); // for analytics or size filtering
+
 // Model creation
 const FileModel = model<IFile>("File", fileSchema);
 

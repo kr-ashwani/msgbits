@@ -11,6 +11,8 @@ interface dbLog {
 }
 
 let connMap = new Map<string, mongoose.Connection>();
+const syncedModels = new Set<string>(); // tracks which models have synced indexes
+
 class LogService {
   async writeLogsToDB(data: dbLog) {
     try {
@@ -29,6 +31,13 @@ class LogService {
         LogModel = conn.model(modelName, LogSchema, modelName);
       } else LogModel = mongoose.model(modelName, LogSchema, modelName);
 
+      // 3️⃣ Sync indexes only once per model
+      const syncKey = `${data.db || "default"}:${modelName}`;
+      if (!syncedModels.has(syncKey)) {
+        await LogModel.syncIndexes(); // create indexes for this model once
+        syncedModels.add(syncKey);
+      }
+
       await LogModel.create(data.log);
     } catch (err: unknown) {
       if (err instanceof Error) handleError(errToAppError(err, true));
@@ -38,4 +47,4 @@ class LogService {
 
 const logService = new LogService();
 
-export { dbLog, logService };
+export { type dbLog, logService };

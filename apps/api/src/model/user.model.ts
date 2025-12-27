@@ -118,11 +118,15 @@ userSchema.methods.comparePassword = async function (candidatePassword: string) 
 userSchema.methods.compareAuthCode = async function (candidateAuthCode: string) {
   return await bcrypt.compare(candidateAuthCode, this.authCode).catch((e) => false);
 };
-
 // Helper function to hash a string
 const hashString = async (value: string): Promise<string> => {
   return await bcrypt.hash(value, 10);
 };
+
+// ----------------------- Indexes -----------------------
+userSchema.index({ lastOnline: -1 }); // analytics, active users
+userSchema.index({ isVerified: 1 }); // user filters, dashboards
+
 const UserModel = model<IUser>("User", userSchema);
 export default UserModel;
 export const userModelEvents: ModelEventEmitter<ResponseUserSchema> =

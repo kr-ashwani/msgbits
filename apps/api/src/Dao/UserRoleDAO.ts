@@ -7,16 +7,16 @@ import {
   QueryOptions,
   UpdateQuery,
 } from "mongoose";
-import RoleModel, { IRole } from "../model/role.model";
 import { DmlDAO } from "./DmlDAO";
 import { RowMapper } from "./RowMapper/RowMapper";
+import { IUserRole, UserRoleModel } from "../model/userRole.model";
 
 type Condition<T> = T | QuerySelector<T | any>;
 type FilterQuery<T> = {
   [P in keyof T]?: Condition<T[P]>;
 } & RootQuerySelector<T>;
 
-class RoleDAO extends DmlDAO<IRole, IRole> {
+class UserRoleDAO extends DmlDAO<IUserRole, IUserRole> {
   /**
    *
    * @param docs IRole or IRole Array
@@ -24,14 +24,14 @@ class RoleDAO extends DmlDAO<IRole, IRole> {
    * @param options
    */
   async create(
-    docs: IRole | IRole[],
-    rowMapper: RowMapper<HydratedDocument<IRole>>,
+    docs: IUserRole | IUserRole[],
+    rowMapper: RowMapper<HydratedDocument<IUserRole>>,
     options?: CreateOptions
   ) {
     try {
-      const userDocs: IRole[] = [];
+      const userDocs: IUserRole[] = [];
 
-      const userRoleResultSet = await RoleModel.create(userDocs, options);
+      const userRoleResultSet = await UserRoleModel.create(userDocs, options);
 
       userRoleResultSet.map((row) => rowMapper.mapRow(row));
     } catch (err: any) {
@@ -46,13 +46,13 @@ class RoleDAO extends DmlDAO<IRole, IRole> {
    * @param options
    */
   async find(
-    filter: FilterQuery<IRole>,
-    rowMapper: RowMapper<HydratedDocument<IRole>>,
-    options?: QueryOptions<IRole> | null | undefined,
-    projection?: ProjectionType<IRole> | null | undefined
+    filter: FilterQuery<IUserRole>,
+    rowMapper: RowMapper<HydratedDocument<IUserRole>>,
+    options?: QueryOptions<IUserRole> | null | undefined,
+    projection?: ProjectionType<IUserRole> | null | undefined
   ) {
     try {
-      const userResultSet = await RoleModel.find(filter, projection, options);
+      const userResultSet = await UserRoleModel.find(filter, projection, options);
 
       userResultSet.map((row) => rowMapper.mapRow(row));
     } catch (err: any) {
@@ -68,13 +68,13 @@ class RoleDAO extends DmlDAO<IRole, IRole> {
    * @param options
    */
   async update(
-    filter: FilterQuery<IRole>,
-    update: UpdateQuery<IRole>,
-    rowMapper: RowMapper<HydratedDocument<IRole>>,
-    options?: QueryOptions<IRole> | null | undefined
+    filter: FilterQuery<IUserRole>,
+    update: UpdateQuery<IUserRole>,
+    rowMapper: RowMapper<HydratedDocument<IUserRole>>,
+    options?: QueryOptions<IUserRole> | null | undefined
   ) {
     try {
-      const userResultSet = await RoleModel.findOneAndUpdate(filter, update, options);
+      const userResultSet = await UserRoleModel.findOneAndUpdate(filter, update, options);
       if (userResultSet) rowMapper.mapRow(userResultSet);
     } catch (err: any) {
       throw err;
@@ -82,5 +82,5 @@ class RoleDAO extends DmlDAO<IRole, IRole> {
   }
 }
 
-const roleDAO = new RoleDAO();
-export { roleDAO };
+const userRoleDAO = new UserRoleDAO();
+export { userRoleDAO };

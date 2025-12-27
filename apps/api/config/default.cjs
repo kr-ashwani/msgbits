@@ -29,4 +29,5 @@ module.exports = {
   STUN_URL: process.env.STUN_URL,
   TURN_URL: process.env.TURN_URL,
   TURN_STATIC_AUTH_SECRET: process.env.TURN_STATIC_AUTH_SECRET,
+  ADMIN_EMAILS: process.env.ADMIN_EMAILS ? process.env.ADMIN_EMAILS.split(",").map(e => e.trim()) : ["ashwanikr160@gmail.com"],
 };

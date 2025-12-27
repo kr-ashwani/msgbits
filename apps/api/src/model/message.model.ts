@@ -96,6 +96,15 @@ const messageSchema = new Schema<IMessage>(
   }
 );
 
+// ----------------------- Indexes -----------------------
+messageSchema.index({ chatRoomId: 1, createdAt: -1 }); // fast pagination inside chat room
+messageSchema.index({ messageId: 1 }, { unique: true }); // guarantee unique messageId if using UUID or sequence IDs
+messageSchema.index({ senderId: 1 }); // quickly fetch messages sent by a user
+messageSchema.index({ type: 1 }); // filtering messages by type (file/text/info)
+messageSchema.index({ deliveredTo: 1 }); // needed if querying delivered/seens often
+messageSchema.index({ seenBy: 1 });
+messageSchema.index({ repliedTo: 1 }); // messages that reply to another message
+
 // Model creation
 const MessageModel = model<IMessage>("Message", messageSchema);
 
